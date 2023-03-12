@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import React, { CSSProperties, useState } from "react";
@@ -8,50 +9,57 @@ type CardsRenderProps = {
   cardOffset: any;
 };
 
-export const CardsRender = ({ style, item, cardOffset }: CardsRenderProps) => {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  return (
-    <div className="card__container" style={style}>
-      <div className="card__wrapper">
-        <Link href="#" className="card__link">
-          <div
-            className={`card__image ${!isImageLoaded && "isLoading"}`}
-            style={{
-              width: cardOffset.w,
-              height: cardOffset.h - 150,
-            }}
-          >
-            <img
-              src={
-                `${item.source}=s400` ??
-                "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw=="
-              }
-              onLoad={() => {
-                setIsImageLoaded(true);
+export const CardsRender = React.forwardRef(
+  (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
+    const { style, item, cardOffset } = props;
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+    return (
+      <div
+        className="card__container"
+        style={style}
+        ref={ref ? ref : undefined}
+      >
+        <div className="card__wrapper">
+          <Link href="#" className="card__link">
+            <div
+              className={`card__image ${!isImageLoaded && "isLoading"}`}
+              style={{
+                width: cardOffset.w,
+                height: cardOffset.h - 150,
               }}
-              style={{ opacity: isImageLoaded ? 1 : 0 }}
-              referrerPolicy="no-referrer"
-              loading="lazy"
-              alt="card"
-            />
-          </div>
-          <div className="card__info">
-            <div className="card__title">
-              <div className="card__titleTop">
-                <span className="card__collection">MutantApeYachtClub</span>
-                <div>
-                  <Icon />
-                </div>
-              </div>
-              <span className="card__nft">MutantApeYachtClub #255</span>
+            >
+              <img
+                src={
+                  `${item.source}=s400` ??
+                  "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw=="
+                }
+                onLoad={() => {
+                  setIsImageLoaded(true);
+                }}
+                style={{ opacity: isImageLoaded ? 1 : 0 }}
+                referrerPolicy="no-referrer"
+                loading="lazy"
+                alt="card"
+              />
             </div>
-            <div className="card__prize"></div>
-          </div>
-        </Link>
+            <div className="card__info">
+              <div className="card__title">
+                <div className="card__titleTop">
+                  <span className="card__collection">MutantApeYachtClub</span>
+                  <div>
+                    <Icon />
+                  </div>
+                </div>
+                <span className="card__nft">MutantApeYachtClub #255</span>
+              </div>
+              <div className="card__prize"></div>
+            </div>
+          </Link>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 const Icon = () => {
   return (

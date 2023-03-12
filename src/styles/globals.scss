@@ -190,16 +190,27 @@ body {
 }
 
 .loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   width: 100%;
-  height: 20vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 999;
 
-  span {
-    font-family: inherit;
-    font-size: 16;
+  img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    max-width: 200px;
+    max-height: 200px;
   }
 }
 
