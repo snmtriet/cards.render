@@ -17,8 +17,10 @@ export default function Input({
     <div className="input__container">
       <div className="input__title">{title}</div>
       <input
-        type="text"
+        type="number"
+        inputMode="decimal"
         value={value}
+        min={0}
         onChange={(e) => {
           handleChange(e, keyValue);
         }}

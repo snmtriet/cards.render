@@ -98,7 +98,7 @@ export default function Home() {
           <div className="loading">
             <img
               src="http://pa1.narvii.com/6042/dcf403976bda4dec53e694369b3ff6f95a34df32_00.gif"
-              alt="nyan"
+              alt="loading"
             />
           </div>
         )}

@@ -50,7 +50,9 @@ export const CardsRender = React.forwardRef(
                     <Icon />
                   </div>
                 </div>
-                <span className="card__nft">MutantApeYachtClub #255</span>
+                <span className="card__nft">
+                  {item.name || "MutantApeYachtClub #255"}
+                </span>
               </div>
               <div className="card__prize"></div>
             </div>

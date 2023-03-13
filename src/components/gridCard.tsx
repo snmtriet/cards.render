@@ -9,7 +9,6 @@ type GridCardProps = {
   rowGap: number;
   columnGap: number;
 };
-// forwardRef<Ref, Props>((props, ref)
 export const GridCard = React.forwardRef(
   (props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
     const { data, column, rowGap, columnGap } = props;
@@ -18,7 +17,6 @@ export const GridCard = React.forwardRef(
       h: 0,
     });
     const [dataRender, setDataRender] = useState([]);
-
     const { width } = useWindowDimensions();
 
     useEffect(() => {
@@ -48,55 +46,36 @@ export const GridCard = React.forwardRef(
       }
     }, [column, data, rowGap, columnGap, width]);
 
+    function calculateHeightGrid() {
+      return Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap);
+    }
+
     return (
       <div
         className="dynamic-grid"
         id="dynamic-grid"
         style={{
-          height:
-            Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap),
-          maxHeight:
-            Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap),
           position: "relative",
+          height: calculateHeightGrid(),
+          maxHeight: calculateHeightGrid(),
         }}
       >
         {dataRender.map((item: any, index: number) => {
-          if (dataRender.length === index + 1) {
-            return (
-              <CardsRender
-                ref={ref}
-                cardOffset={cardOffset}
-                key={index}
-                item={item}
-                style={{
-                  position: "absolute",
-                  top: item.top,
-                  left: item.left,
-                  width: cardOffset.w,
-                  height: cardOffset.h,
-                  paddingBottom: 8,
-                  paddingTop: 8,
-                }}
-              />
-            );
-          } else {
-            return (
-              <CardsRender
-                cardOffset={cardOffset}
-                key={index}
-                item={item}
-                style={{
-                  position: "absolute",
-                  top: item.top,
-                  left: item.left,
-                  width: cardOffset.w,
-                  height: cardOffset.h,
-                  paddingBottom: 8,
-                  paddingTop: 8,
-                }}
-              />
-            );
-          }
+          return (
+            <CardsRender
+              ref={dataRender.length === index + 1 ? ref : undefined}
+              cardOffset={cardOffset}
+              key={index}
+              item={item}
+              style={{
+                position: "absolute",
+                top: item.top,
+                left: item.left,
+                width: cardOffset.w,
+                height: cardOffset.h,
+              }}
+            />
+          );
         })}
       </div>
     );

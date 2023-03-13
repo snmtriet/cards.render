@@ -5,7 +5,6 @@ export default function useNft(pageNumber: number) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
-  console.log("🍕 ~ nfts:", nfts);
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export default function useNft(pageNumber: number) {
     axios({
       method: "GET",
       url: "https://api-sgz.onrender.com/v1/images/creator/63386a841863b522ba1f6e9d",
-      params: { size: 100, page: pageNumber },
+      params: { size: 20, page: pageNumber },
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then((res) => {
