@@ -13,6 +13,12 @@ export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset } = props;
     const [isImageLoaded, setIsImageLoaded] = useState(false);
+    const image =
+      item.image.replace(
+        "https://ipfs.io/ipfs/",
+        "https://cronoscorgiclub.mypinata.cloud/ipfs/"
+      ) ??
+      "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw==";
     return (
       <>
         {ref ? (
@@ -27,15 +33,12 @@ export const CardsRender = React.forwardRef(
                   }}
                 >
                   <img
-                    src={
-                      `${item.image}` ??
-                      "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw=="
-                    }
+                    src={image}
                     onLoad={() => {
                       setIsImageLoaded(true);
                     }}
                     style={{ opacity: isImageLoaded ? 1 : 0 }}
-                    referrerPolicy="no-referrer"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     loading="lazy"
                     alt="card"
                   />
@@ -71,15 +74,12 @@ export const CardsRender = React.forwardRef(
                   }}
                 >
                   <img
-                    src={
-                      `${item.image}` ??
-                      "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw=="
-                    }
+                    src={image}
                     onLoad={() => {
                       setIsImageLoaded(true);
                     }}
                     style={{ opacity: isImageLoaded ? 1 : 0 }}
-                    referrerPolicy="no-referrer"
+                    referrerPolicy="strict-origin-when-cross-origin"
                     loading="lazy"
                     alt="card"
                   />
