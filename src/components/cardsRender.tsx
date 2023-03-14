@@ -1,113 +1,112 @@
 /* eslint-disable react/display-name */
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
-import React, { CSSProperties, useState } from "react";
+import React, {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useState,
+} from "react";
+import classNames from "classnames";
 
 type CardsRenderProps = {
   style?: CSSProperties;
   item: any;
-  cardOffset: any;
+  cardOffset: {
+    w: number;
+    h: number;
+  };
+};
+
+type CardWrapperProps = {
+  item: any;
+  setIsImageLoaded: Dispatch<SetStateAction<boolean>>;
+  cardOffset: {
+    w: number;
+    h: number;
+  };
+  isImageLoaded: boolean;
 };
 
 export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset } = props;
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-    const image =
-      item.image.replace(
-        "https://ipfs.io/ipfs/",
-        "https://cronoscorgiclub.mypinata.cloud/ipfs/"
-      ) ??
-      "https://assets.raribleuserdata.com/prod/v1/image/t_image_preview/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1VRENCNzllQVlTNDh4WVlXZjhTMzJuVEZ4ZUJVbkE2UExNMXV6ck5SM3FFYw==";
+
     return (
       <>
         {ref ? (
           <div className="card__container" style={style} ref={ref}>
-            <div className="card__wrapper">
-              <Link href="#" className="card__link">
-                <div
-                  className={`card__image ${!isImageLoaded && "isLoading"}`}
-                  style={{
-                    width: cardOffset.w,
-                    height: cardOffset.h - 150,
-                  }}
-                >
-                  <img
-                    src={image}
-                    onLoad={() => {
-                      setIsImageLoaded(true);
-                    }}
-                    style={{ opacity: isImageLoaded ? 1 : 0 }}
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    loading="lazy"
-                    alt="card"
-                  />
-                </div>
-                <div className="card__info">
-                  <div className="card__title">
-                    <div className="card__titleTop">
-                      <span className="card__collection">
-                        Bored Ape Yacht Club
-                      </span>
-                      <div>
-                        <Icon />
-                      </div>
-                    </div>
-                    <span className="card__nft">
-                      BoredApeYachtClub #{item.tokenId}
-                    </span>
-                  </div>
-                  <div className="card__prize"></div>
-                </div>
-              </Link>
-            </div>
+            <CardWrapper
+              item={item}
+              cardOffset={cardOffset}
+              isImageLoaded={isImageLoaded}
+              setIsImageLoaded={setIsImageLoaded}
+            />
           </div>
         ) : (
           <div className="card__container" style={style}>
-            <div className="card__wrapper">
-              <Link href="#" className="card__link">
-                <div
-                  className={`card__image ${!isImageLoaded && "isLoading"}`}
-                  style={{
-                    width: cardOffset.w,
-                    height: cardOffset.h - 150,
-                  }}
-                >
-                  <img
-                    src={image}
-                    onLoad={() => {
-                      setIsImageLoaded(true);
-                    }}
-                    style={{ opacity: isImageLoaded ? 1 : 0 }}
-                    referrerPolicy="strict-origin-when-cross-origin"
-                    loading="lazy"
-                    alt="card"
-                  />
-                </div>
-                <div className="card__info">
-                  <div className="card__title">
-                    <div className="card__titleTop">
-                      <span className="card__collection">
-                        Bored Ape Yacht Club
-                      </span>
-                      <div>
-                        <Icon />
-                      </div>
-                    </div>
-                    <span className="card__nft">
-                      BoredApeYachtClub #{item.tokenId}
-                    </span>
-                  </div>
-                  <div className="card__prize"></div>
-                </div>
-              </Link>
-            </div>
+            <CardWrapper
+              item={item}
+              cardOffset={cardOffset}
+              isImageLoaded={isImageLoaded}
+              setIsImageLoaded={setIsImageLoaded}
+            />
           </div>
         )}
       </>
     );
   }
 );
+
+const CardWrapper = ({
+  item,
+  cardOffset,
+  isImageLoaded,
+  setIsImageLoaded,
+}: CardWrapperProps) => {
+  const image = item.image.replace(
+    "https://ipfs.io/ipfs/",
+    "https://cronoscorgiclub.mypinata.cloud/ipfs/"
+  );
+  return (
+    <div className="card__wrapper">
+      <div className="card__link">
+        <div
+          className={classNames("card__image", {
+            isLoading: !isImageLoaded,
+          })}
+          style={{
+            width: cardOffset.w,
+            height: cardOffset.h - 150,
+          }}
+        >
+          <img
+            src={image}
+            onLoad={() => {
+              setIsImageLoaded(true);
+            }}
+            style={{ opacity: isImageLoaded ? 1 : 0 }}
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            alt="card"
+          />
+        </div>
+        <div className="card__info">
+          <div className="card__title">
+            <div className="card__titleTop">
+              <span className="card__collection">Bored Ape Yacht Club</span>
+              <div>
+                <Icon />
+              </div>
+            </div>
+            <span className="card__nft">BoredApeYachtClub #{item.tokenId}</span>
+          </div>
+          <div className="card__prize"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Icon = () => {
   return (

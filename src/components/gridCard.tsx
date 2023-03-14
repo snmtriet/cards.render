@@ -8,10 +8,11 @@ type GridCardProps = {
   column: number;
   rowGap: number;
   columnGap: number;
+  isShowFilter: boolean;
 };
 export const GridCard = React.forwardRef(
   (props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
-    const { data, column, rowGap, columnGap } = props;
+    const { data, column, rowGap, columnGap, isShowFilter } = props;
     const [cardOffset, setCardOffset] = useState({
       w: 0,
       h: 0,
@@ -44,7 +45,7 @@ export const GridCard = React.forwardRef(
         });
         setDataRender(newArray);
       }
-    }, [column, data, rowGap, columnGap, width]);
+    }, [column, data, rowGap, columnGap, width, isShowFilter]);
 
     function calculateHeightGrid() {
       return Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap);

@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-export default function useNft(pageNumber: number) {
+export default function useNft(pageNumber: number, query: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
+  const [nftsFiltered, setNftsFiltered] = useState<any>([]);
   const [hasMore, setHasMore] = useState(false);
+  const queryRef = useRef();
 
   useEffect(() => {
     setLoading(true);
@@ -14,13 +16,26 @@ export default function useNft(pageNumber: number) {
     axios({
       method: "GET",
       url: `https://us-central1-bayc-metadata.cloudfunctions.net/api/tokens/traits/${pageNumber}/24`,
+      params: query,
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then((res) => {
-        setNfts((prevNfts: any) => {
-          return [...prevNfts, ...res.data.tokenData];
-        });
+        if (Object.keys(query).length <= 0) {
+          setNfts((prevNfts: any) => {
+            return [...prevNfts, ...res.data.tokenData];
+          });
+        } else {
+          queryRef.current = query;
+          if (JSON.stringify(queryRef.current) === JSON.stringify(query)) {
+            setNftsFiltered((prevNfts: any) => {
+              return [...prevNfts, ...res.data.tokenData];
+            });
+          } else {
+            setNftsFiltered(res.data.tokenData);
+          }
+        }
         setHasMore(res.data.tokenData.length > 0);
+
         setLoading(false);
       })
       .catch((e) => {
@@ -28,7 +43,7 @@ export default function useNft(pageNumber: number) {
         setError(true);
       });
     return () => cancel();
-  }, [pageNumber]);
+  }, [pageNumber, query]);
 
-  return { loading, error, nfts, hasMore };
+  return { loading, error, nfts, hasMore, nftsFiltered };
 }
