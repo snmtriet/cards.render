@@ -42,7 +42,7 @@ export default function Home() {
       }
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          setPageNumber((prevPageNumber) => prevPageNumber + 24);
         }
       });
       if (node) observer.current.observe(node);

@@ -13,15 +13,14 @@ export default function useNft(pageNumber: number) {
     let cancel: any;
     axios({
       method: "GET",
-      url: "https://api-sgz.onrender.com/v1/images/creator/63386a841863b522ba1f6e9d",
-      params: { size: 100, page: pageNumber },
+      url: `https://us-central1-bayc-metadata.cloudfunctions.net/api/tokens/traits/${pageNumber}/24`,
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then((res) => {
         setNfts((prevNfts: any) => {
-          return [...prevNfts, ...res.data.items];
+          return [...prevNfts, ...res.data.tokenData];
         });
-        setHasMore(res.data.items.length > 0);
+        setHasMore(res.data.tokenData.length > 0);
         setLoading(false);
       })
       .catch((e) => {
