@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 
+type traitType = {
+  count: number;
+  highlighted: string;
+  value: string;
+};
+
 type FiltersOptionProps = {
-  item: { name: string; amount: number };
+  item: traitType;
   pushQuery?: (property: string, value: string, type: "ADD" | "REMOVE") => void;
   title: string;
 };
@@ -21,17 +27,20 @@ export const FiltersOption = ({
           <div className="checkbox__inner">
             <input
               type="checkbox"
-              id={item.name}
-              name={item.name}
+              id={`${title}-${item.value}`}
+              name={`${title}-${item.value}`}
               checked={checked}
               onChange={(e) => {
                 setChecked(e.target.checked);
                 const checked = e.target.checked;
                 pushQuery &&
-                  pushQuery(title, item.name, checked ? "ADD" : "REMOVE");
+                  pushQuery(title, item.value, checked ? "ADD" : "REMOVE");
               }}
             />
-            <label htmlFor={item.name} className="checkbox__fake">
+            <label
+              htmlFor={`${title}-${item.value}`}
+              className="checkbox__fake"
+            >
               <div
                 className={classNames("checkbox__wrapper", {
                   active: checked,
@@ -50,10 +59,10 @@ export const FiltersOption = ({
               </div>
             </label>
           </div>
-          <span className="properties__name">{item.name}</span>
+          <span className="properties__name">{item.value}</span>
         </div>
       </div>
-      <span>{item.amount}</span>
+      <span>{item.count}</span>
     </button>
   );
 };

@@ -5,14 +5,22 @@ import { FiltersOption } from "./filtersOption";
 type FilterRowProps = {
   title: string;
   isTraitsProperty?: boolean;
-  data?: { name: string; amount: number }[];
+  data?: traitType[];
+  count?: number;
   pushQuery?: (property: string, value: string, type: "ADD" | "REMOVE") => void;
+};
+
+type traitType = {
+  count: number;
+  highlighted: string;
+  value: string;
 };
 
 export const FiltersRow = ({
   title,
   isTraitsProperty,
   data,
+  count,
   pushQuery,
 }: FilterRowProps) => {
   const [isShowTraits, setIsShowTraits] = useState(false);
@@ -25,9 +33,9 @@ export const FiltersRow = ({
       })}
     >
       <div className="wrapper" onClick={toggleTraits}>
-        <h3>{title}</h3>
+        <h3>{title.replace("trait_", "").toUpperCase()}</h3>
         <div className="value">
-          {isTraitsProperty && <span>24</span>}
+          {isTraitsProperty && <span>{count}</span>}
           <svg viewBox="0 0 24 24" fill="none" width="24" height="24">
             <path
               fillRule="evenodd"

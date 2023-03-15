@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/display-name */
 /* eslint-disable @next/next/no-img-element */
 import React, {
   CSSProperties,
   Dispatch,
   SetStateAction,
+  useEffect,
+  useRef,
   useState,
 } from "react";
 import classNames from "classnames";
@@ -64,10 +67,21 @@ const CardWrapper = ({
   isImageLoaded,
   setIsImageLoaded,
 }: CardWrapperProps) => {
-  const image = item.image.replace(
+  const {
+    document: { nftId, image, collectionName },
+  } = item;
+  const img = image.replace(
     "https://ipfs.io/ipfs/",
     "https://cronoscorgiclub.mypinata.cloud/ipfs/"
   );
+  const itemRef: any = useRef(nftId);
+  useEffect(() => {
+    if (JSON.stringify(itemRef.current) !== JSON.stringify(nftId)) {
+      setIsImageLoaded(false);
+      itemRef.current = nftId;
+    }
+  }, [item, nftId]);
+
   return (
     <div className="card__wrapper">
       <div className="card__link">
@@ -81,10 +95,18 @@ const CardWrapper = ({
           }}
         >
           <img
-            src={image}
+            src={
+              img ||
+              `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.png` ||
+              `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.webp`
+            }
             onLoad={() => {
               setIsImageLoaded(true);
             }}
+            onError={() => {
+              setIsImageLoaded(false);
+            }}
+            id={`${collectionName}-${nftId}`}
             style={{ opacity: isImageLoaded ? 1 : 0 }}
             referrerPolicy="no-referrer"
             loading="lazy"
@@ -99,7 +121,7 @@ const CardWrapper = ({
                 <Icon />
               </div>
             </div>
-            <span className="card__nft">BoredApeYachtClub #{item.tokenId}</span>
+            <span className="card__nft">BoredApeYachtClub #{nftId}</span>
           </div>
           <div className="card__prize"></div>
         </div>

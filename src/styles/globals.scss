@@ -39,6 +39,12 @@ button {
   cursor: pointer;
 }
 
+.isLoading {
+  animation: 1.5s ease-in-out 0.5s infinite normal none running
+    animation-loading;
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
 .card__container {
   .card__wrapper {
     flex-direction: column;
@@ -107,12 +113,6 @@ button {
         align-items: stretch;
 
         margin-bottom: 12px;
-
-        &.isLoading {
-          animation: 1.5s ease-in-out 0.5s infinite normal none running
-            animation-loading;
-          background: rgba(255, 255, 255, 0.2);
-        }
 
         img {
           opacity: 1;

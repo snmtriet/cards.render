@@ -9,6 +9,7 @@ type GridCardProps = {
   rowGap: number;
   columnGap: number;
   isShowFilter: boolean;
+  loading: boolean;
 };
 export const GridCard = React.forwardRef(
   (props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
