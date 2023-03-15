@@ -48,18 +48,14 @@ export default function Home() {
     query
   );
 
-  const pushQuery = (
-    property: string,
-    value: string,
-    type: "ADD" | "REMOVE"
-  ) => {
-    if (type === "ADD") setQuery((prev) => ({ ...prev, [property]: value }));
-    if (type === "REMOVE")
+  const pushQuery = (trait: string, value: string, type: "ADD" | "REMOVE") => {
+    if (type === "ADD") setQuery((prev) => ({ ...prev, [trait]: value }));
+    if (type === "REMOVE") {
       setQuery((prev) => {
-        return Object.keys(prev).filter((property: string) => {
-          return prev[property as keyof typeof prev] !== value;
-        });
+        delete prev[trait as keyof typeof prev];
+        return prev;
       });
+    }
   };
 
   const observer: any = useRef();
