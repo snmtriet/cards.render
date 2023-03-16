@@ -68,6 +68,7 @@ export default function Home() {
           [trait]: prevTraits ? [prevTraits, value].flat() : [value],
         };
       });
+    setPageNumber(1);
     if (type === "REMOVE") {
       setQuery((prev) => {
         const prevTraits: string[] = prev[trait as keyof typeof prev];
@@ -88,6 +89,7 @@ export default function Home() {
             }, {});
         }
       });
+      setPageNumber(1);
     }
   };
 

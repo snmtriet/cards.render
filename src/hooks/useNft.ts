@@ -8,21 +8,25 @@ const parseQuery = (query: {}): string => {
     .replaceAll('"', "`")
     .replaceAll("`:", ":=")
     .replaceAll("],`", "] && ")
-    .replace("`", "");
+    .replace("`", "")
+    .replace("]`", "]");
 };
 
 export default function useNft(pageNumber: number, query: {}) {
-  // console.log("🍕 ~ query:", query);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
   const [traits, setTraits] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const queryRef = useRef({} as any);
+  const pageNumberRef = useRef(0);
 
   useEffect(() => {
     setLoading(true);
     setError(false);
+    const isEqualQuery =
+      JSON.stringify(queryRef.current) === JSON.stringify(query);
+
     let cancel: any;
 
     const searchQuery = {
@@ -65,9 +69,6 @@ export default function useNft(pageNumber: number, query: {}) {
             });
           }
         } else {
-          const isEqualQuery =
-            JSON.stringify(queryRef.current) === JSON.stringify(query);
-
           setNfts((prevNfts: any) => {
             return isEqualQuery
               ? [...prevNfts, ...results[0].hits]
@@ -76,8 +77,8 @@ export default function useNft(pageNumber: number, query: {}) {
           if (!isEqualQuery) {
             queryRef.current = query as any;
           }
+          pageNumberRef.current = pageNumber;
         }
-
         setHasMore(results[0].hits.length > 0);
         setLoading(false);
       })
