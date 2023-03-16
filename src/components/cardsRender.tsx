@@ -68,19 +68,27 @@ const CardWrapper = ({
   setIsImageLoaded,
 }: CardWrapperProps) => {
   const {
-    document: { nftId, image, collectionName },
+    document: { nftId, image, collectionName, rank, rarityScore },
   } = item;
   const img = image.replace(
     "https://ipfs.io/ipfs/",
     "https://cronoscorgiclub.mypinata.cloud/ipfs/"
   );
   const itemRef: any = useRef(nftId);
+  const cardOffsetRef: any = useRef(cardOffset);
   useEffect(() => {
     if (JSON.stringify(itemRef.current) !== JSON.stringify(nftId)) {
       setIsImageLoaded(false);
       itemRef.current = nftId;
     }
-  }, [item, nftId]);
+    if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
+      setIsImageLoaded(false);
+      setTimeout(() => {
+        setIsImageLoaded(true);
+      }, 1000);
+      cardOffsetRef.current = cardOffset;
+    }
+  }, [item, nftId, cardOffset]);
 
   return (
     <div className="card__wrapper">
@@ -116,14 +124,33 @@ const CardWrapper = ({
         <div className="card__info">
           <div className="card__title">
             <div className="card__titleTop">
-              <span className="card__collection">Bored Ape Yacht Club</span>
+              <span className="card__collection">{collectionName}</span>
               <div>
                 <Icon />
               </div>
             </div>
-            <span className="card__nft">BoredApeYachtClub #{nftId}</span>
+            <span className="card__nft">
+              {collectionName.split(" ")} #{nftId}
+            </span>
           </div>
-          <div className="card__prize"></div>
+          <div className="card__prize">
+            <div className="flex-box">
+              <div>
+                <span>Rank</span>
+              </div>
+              <div>
+                <span>Score</span>
+              </div>
+            </div>
+            <div className="flex-box value">
+              <div>
+                <span>#{rank}</span>
+              </div>
+              <div>
+                <span>{rarityScore}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

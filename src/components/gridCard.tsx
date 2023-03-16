@@ -8,12 +8,11 @@ type GridCardProps = {
   column: number;
   rowGap: number;
   columnGap: number;
-  isShowFilter: boolean;
-  loading: boolean;
 };
+
 export const GridCard = React.forwardRef(
   (props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
-    const { data, column, rowGap, columnGap, isShowFilter } = props;
+    const { data, column, rowGap, columnGap } = props;
     const [cardOffset, setCardOffset] = useState({
       w: 0,
       h: 0,
@@ -23,9 +22,10 @@ export const GridCard = React.forwardRef(
 
     useEffect(() => {
       const grid = document.getElementById("dynamic-grid");
+
       if (grid) {
-        const { clientWidth } = grid;
-        const cardWidth = (clientWidth - rowGap * (column - 1)) / column;
+        let { clientWidth } = grid;
+        let cardWidth = (clientWidth - rowGap * (column - 1)) / column;
         const cardHeight = cardWidth + 150; // added height 150px
         setCardOffset({ w: cardWidth, h: cardHeight });
         let rowIndex = 1;
@@ -46,7 +46,7 @@ export const GridCard = React.forwardRef(
         });
         setDataRender(newArray);
       }
-    }, [column, data, rowGap, columnGap, width, isShowFilter]);
+    }, [column, data, rowGap, columnGap, width]);
 
     function calculateHeightGrid() {
       return Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap);

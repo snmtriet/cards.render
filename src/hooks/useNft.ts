@@ -1,6 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
+type traitType = {
+  count: number;
+  highlighted: string;
+  value: string;
+};
+
+type traitData = {
+  counts: traitType[];
+  field_name: string;
+  stats: {
+    total_values: number;
+  };
+};
+
 const parseQuery = (query: {}): string => {
   return JSON.stringify(query)
     .replace("{", "")
@@ -12,14 +26,42 @@ const parseQuery = (query: {}): string => {
     .replace("]`", "]");
 };
 
-export default function useNft(pageNumber: number, query: {}) {
+export default function useNft(
+  pageNumber: number,
+  query: {},
+  refetch: boolean
+) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
-  const [traits, setTraits] = useState([]);
+  const [traits, setTraits] = useState<traitData[]>([]);
+  const [found, setFound] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const queryRef = useRef({} as any);
-  const pageNumberRef = useRef(0);
+
+  function filterTraits(
+    traitName: string,
+    value: string,
+    type: "ADD" | "REMOVE"
+  ) {
+    setTraits((prevTraits: traitData[]) => {
+      return prevTraits.map((trait: traitData) => {
+        if (trait.field_name === traitName) {
+          return {
+            ...trait,
+            counts: trait.counts.map((traitType: traitType) => {
+              if (traitType.value === value) {
+                console.log(traitType);
+                return { ...traitType, checked: type === "ADD" ? true : false };
+              }
+              return traitType;
+            }),
+          };
+        }
+        return trait;
+      });
+    });
+  }
 
   useEffect(() => {
     setLoading(true);
@@ -59,26 +101,43 @@ export default function useNft(pageNumber: number, query: {}) {
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then(({ data: { results } }) => {
-        if (Object.keys(query).length === 0) {
-          if (Object.keys(queryRef.current).length > 0) {
-            setNfts(results[0].hits);
-          } else {
-            setTraits(results[0].facet_counts);
-            setNfts((prevNfts: any) => {
-              return [...prevNfts, ...results[0].hits];
-            });
-          }
-        } else {
+        //! FIRST TIME FETCH DATA
+        if (
+          Object.keys(query).length === 0 &&
+          Object.keys(queryRef.current).length === 0
+        ) {
+          setTraits(results[0].facet_counts);
+          setNfts((prevNfts: any) => {
+            return [...prevNfts, ...results[0].hits];
+          });
+          setFound(results[0].found);
+        }
+
+        //! WHEN USER REMOVED ALL TRAIT VALUE IN FILTER
+        if (
+          Object.keys(query).length === 0 &&
+          Object.keys(queryRef.current).length > 0
+        ) {
+          setNfts(results[0].hits);
+          setFound(results[0].found);
+          queryRef.current = {};
+        }
+
+        //! WHEN USER CHOOSE TRAIT VALUE IN FILTER
+        if (Object.keys(query).length > 0) {
           setNfts((prevNfts: any) => {
             return isEqualQuery
               ? [...prevNfts, ...results[0].hits]
               : results[0].hits;
           });
+          setFound(results[0].found);
+
+          // CHECK QUERY DUPLICATE
           if (!isEqualQuery) {
             queryRef.current = query as any;
           }
-          pageNumberRef.current = pageNumber;
         }
+
         setHasMore(results[0].hits.length > 0);
         setLoading(false);
       })
@@ -87,7 +146,7 @@ export default function useNft(pageNumber: number, query: {}) {
         setError(true);
       });
     return () => cancel();
-  }, [pageNumber, query]);
+  }, [pageNumber, query, refetch]);
 
-  return { loading, error, nfts, hasMore, traits };
+  return { loading, error, nfts, hasMore, traits, filterTraits, found };
 }

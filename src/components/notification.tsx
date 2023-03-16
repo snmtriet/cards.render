@@ -1,6 +1,7 @@
-import React from "react";
+/* eslint-disable react/display-name */
+import React, { memo } from "react";
 
-export const Notification = () => {
+export const Notification = memo(() => {
   return (
     <div className="notification__container">
       <div className="notification__wrapper">
@@ -18,4 +19,4 @@ export const Notification = () => {
       </div>
     </div>
   );
-};
+});

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
 import classNames from "classnames";
 
 type traitType = {
   count: number;
   highlighted: string;
   value: string;
+  checked?: boolean;
 };
 
 type FiltersOptionProps = {
@@ -18,8 +18,6 @@ export const FiltersOption = ({
   pushQuery,
   title,
 }: FiltersOptionProps) => {
-  const [checked, setChecked] = useState(false);
-
   return (
     <button className="filters__option">
       <div className="filters__checkbox">
@@ -29,9 +27,8 @@ export const FiltersOption = ({
               type="checkbox"
               id={`${title}-${item.value}`}
               name={`${title}-${item.value}`}
-              checked={checked}
+              checked={item.checked ? item.checked : false}
               onChange={(e) => {
-                setChecked(e.target.checked);
                 const checked = e.target.checked;
                 pushQuery &&
                   pushQuery(title, item.value, checked ? "ADD" : "REMOVE");
@@ -43,10 +40,10 @@ export const FiltersOption = ({
             >
               <div
                 className={classNames("checkbox__wrapper", {
-                  active: checked,
+                  active: item.checked ? item.checked : false,
                 })}
               >
-                {checked && (
+                {item.checked && (
                   <svg viewBox="0 0 10 8" fill="none" width="10" height="10">
                     <path
                       d="M1 3.5L3.66667 6L9 1"
