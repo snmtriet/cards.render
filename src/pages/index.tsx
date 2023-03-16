@@ -47,14 +47,17 @@ export default function Home() {
 
   useEffect(() => {
     setColumn(columnConfig);
-
     if (width && width < 768) setIsShowFilter(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width, height]);
+
+  useEffect(() => {
     if (height) {
       const filter = document.getElementById("filters");
       if (filter) filter.style.height = `${height - 50}px`;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [width, height]);
+  }, [height]);
 
   const { nfts, traits, hasMore, loading, error } = useNft(pageNumber, query);
 
