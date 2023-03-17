@@ -1,18 +1,20 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import useNft from "@/hooks/useNft";
-import Input from "@/components/input";
-import { FiltersRow } from "@/components/Filters";
 import { GridCard } from "../components/gridCard";
-import { Notification } from "@/components/notification";
-import { FiltersTop } from "@/components/Filters/filtersTop";
+import SiteChat from "@/layout/components/siteChat";
+import Header from "@/layout/components/Header/header";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { Notification } from "@/components/notification";
 
 export default function Home() {
   const { width, height } = useWindowDimensions();
+
+  const [isOpenNavMobile, setOpenNavMobile] = useState(false);
+
   const columnConfig = width
     ? width > 1440
       ? 6
@@ -28,15 +30,16 @@ export default function Home() {
   const [columnGap, setColumnGap] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [column, setColumn] = useState(columnConfig);
-  const [isShowFilter, setIsShowFilter] = useState(true);
+  const [isShowFilter, setIsShowFilter] = useState(
+    width && width > 992 ? true : false
+  );
   const [isRefetch, setIsRefetch] = useState(false);
   const [isShowProperties, setIsShowProperties] = useState(true);
   const [query, setQuery] = useState({});
 
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
-    query,
-    isRefetch
+    query
   );
 
   const toggleFilter = useCallback(() => {
@@ -58,20 +61,11 @@ export default function Home() {
   useEffect(() => {
     setColumn(columnConfig);
 
-    if (width && width < 768) {
-      setIsShowFilter(false);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width]);
 
   useEffect(() => {
-    if (width && width < 768) {
-      if (isShowFilter) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "visible";
-      }
-    } else {
+    if (width && width > 1200) {
       setIsRefetch((prev) => !prev);
     }
   }, [isShowFilter, width]);
@@ -147,113 +141,74 @@ export default function Home() {
   };
 
   return (
-    <main>
-      <Notification />
-      <FiltersTop
-        loading={loading}
-        columnConfig={columnConfig}
-        column={column}
-        toggleFilter={toggleFilter}
-        isShowFilter={isShowFilter}
-        toggleColumns={toggleColumns}
-      />
-      <div className="total-found">
-        <h3>
-          Total:{" "}
-          {new Intl.NumberFormat("en-IN", {
-            maximumSignificantDigits: 10,
-          }).format(found)}{" "}
-          items
-        </h3>
-      </div>
-      <div className="container">
-        <div className="container__wrapper">
+    <div className="site-container">
+      <div className="site-layout">
+        <div className="site-layout__header">
+          <Header
+            column={column}
+            loading={loading}
+            columnConfig={columnConfig}
+            toggleFilter={toggleFilter}
+            isShowFilter={isShowFilter}
+            toggleColumns={toggleColumns}
+            isOpenNavMobile={isOpenNavMobile}
+            setOpenNavMobile={setOpenNavMobile}
+          />
+        </div>
+        <div className="site-layout__main">
           <div
-            className={classNames("filters", {
-              hidden: !isShowFilter,
+            className={classNames("page-layout-relative", {
+              contain: !isShowFilter,
             })}
-            id="filters"
           >
-            <button className="filters__toggle mb-20" onClick={toggleFilter}>
-              {isShowFilter ? <IconArrow /> : <IconFilter />}
-              <span>Filters</span>
-            </button>
-            <Input
-              title="Columns: "
-              handleChange={handleChange}
-              keyValue="column"
-              value={column}
-            />
-            <Input
-              title="Row gap: "
-              handleChange={handleChange}
-              keyValue="rowGap"
-              value={rowGap}
-            />
-            <Input
-              title="Column gap: "
-              handleChange={handleChange}
-              keyValue="columnGap"
-              value={columnGap}
-            />
-            <FiltersRow
-              title="Properties"
-              toggleProperties={toggleProperties}
-              isShowProperties={isShowProperties}
-              traits={traits}
-              pushQuery={pushQuery}
-            />
-          </div>
-
-          <div className="list">
-            <GridCard
-              ref={lastNftElementRef}
-              data={nfts}
-              column={column <= 0 ? 1 : column}
-              rowGap={rowGap}
-              columnGap={columnGap}
-            />
+            <div className="page-layout-main">
+              <div className="page-layout-inner">
+                <Notification />
+                <div className="total-found">
+                  <h3>
+                    Total:{" "}
+                    {new Intl.NumberFormat("en-IN", {
+                      maximumSignificantDigits: 10,
+                    }).format(found)}{" "}
+                    items
+                  </h3>
+                </div>
+                <div className="container">
+                  <div className="container__wrapper">
+                    <div className="list">
+                      <GridCard
+                        ref={lastNftElementRef}
+                        data={nfts}
+                        column={column <= 0 ? 1 : column}
+                        rowGap={rowGap}
+                        columnGap={columnGap}
+                        isRefetch={isRefetch}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="page-layout-footer">
+                {/* <Footer /> */}Loading...
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+      <SiteChat
+        isShowFilter={isShowFilter}
+        setIsShowFilter={setIsShowFilter}
+        isOpenNavMobile={isOpenNavMobile}
+        setOpenNavMobile={setOpenNavMobile}
+        column={column}
+        columnGap={columnGap}
+        pushQuery={pushQuery}
+        handleChange={handleChange}
+        rowGap={rowGap}
+        toggleProperties={toggleProperties}
+        isShowProperties={isShowProperties}
+        traits={traits}
+      />
+    </div>
   );
 }
-
-const IconArrow = () => {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      width="24"
-      height="24"
-      style={{ transform: "rotate(90deg)" }}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M7.46967 9.46967C7.76256 9.17678 8.23744 9.17678 8.53033 9.46967L12 12.9393L15.4697 9.46967C15.7626 9.17678 16.2374 9.17678 16.5303 9.46967C16.8232 9.76256 16.8232 10.2374 16.5303 10.5303L12.5303 14.5303C12.2374 14.8232 11.7626 14.8232 11.4697 14.5303L7.46967 10.5303C7.17678 10.2374 7.17678 9.76256 7.46967 9.46967Z"
-        fill="currentColor"
-      ></path>
-    </svg>
-  );
-};
-
-const IconFilter = () => {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      width="24"
-      height="24"
-      style={{ marginRight: 4 }}
-    >
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M14 7.5C13.3096 7.5 12.75 8.05964 12.75 8.75C12.75 9.44036 13.3096 10 14 10C14.6904 10 15.25 9.44036 15.25 8.75C15.25 8.05964 14.6904 7.5 14 7.5ZM11.3535 8C11.68 6.84575 12.7412 6 14 6C15.2588 6 16.32 6.84575 16.6465 8H18C18.4142 8 18.75 8.33579 18.75 8.75C18.75 9.16421 18.4142 9.5 18 9.5H16.6465C16.32 10.6543 15.2588 11.5 14 11.5C12.7412 11.5 11.68 10.6543 11.3535 9.5H6C5.58579 9.5 5.25 9.16421 5.25 8.75C5.25 8.33579 5.58579 8 6 8H11.3535ZM10 14C9.30964 14 8.75 14.5596 8.75 15.25C8.75 15.9404 9.30964 16.5 10 16.5C10.6904 16.5 11.25 15.9404 11.25 15.25C11.25 14.5596 10.6904 14 10 14ZM7.35352 14.5C7.67998 13.3457 8.74122 12.5 10 12.5C11.2588 12.5 12.32 13.3457 12.6465 14.5H18C18.4142 14.5 18.75 14.8358 18.75 15.25C18.75 15.6642 18.4142 16 18 16H12.6465C12.32 17.1543 11.2588 18 10 18C8.74122 18 7.67998 17.1543 7.35352 16H6C5.58579 16 5.25 15.6642 5.25 15.25C5.25 14.8358 5.58579 14.5 6 14.5H7.35352Z"
-        fill="currentColor"
-      ></path>
-    </svg>
-  );
-};

@@ -26,11 +26,7 @@ const parseQuery = (query: {}): string => {
     .replace("]`", "]");
 };
 
-export default function useNft(
-  pageNumber: number,
-  query: {},
-  refetch: boolean
-) {
+export default function useNft(pageNumber: number, query: {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
@@ -146,7 +142,7 @@ export default function useNft(
         setError(true);
       });
     return () => cancel();
-  }, [pageNumber, query, refetch]);
+  }, [pageNumber, query]);
 
   return { loading, error, nfts, hasMore, traits, filterTraits, found };
 }
