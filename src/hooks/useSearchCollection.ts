@@ -10,6 +10,12 @@ export default function useSearchCollection(searchTermDebounce: string) {
     setLoading(true);
     setError(false);
 
+    if (!searchTermDebounce) {
+      setLoading(false);
+      setCollections([]);
+      return;
+    }
+
     let cancel: any;
 
     axios({

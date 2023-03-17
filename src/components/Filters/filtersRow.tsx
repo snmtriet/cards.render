@@ -1,4 +1,5 @@
 /* eslint-disable react/display-name */
+import formatFirstStringToUpperCase from "@/utils/formatFirstString";
 import classNames from "classnames";
 import {
   CSSProperties,
@@ -98,10 +99,9 @@ export const FiltersRow = memo(
             ) : null}
 
             <h3>
-              {`${title.replace("trait_", "").charAt(0).toUpperCase()}${title
-                .replace("trait_", "")
-                .slice(1)
-                .toLocaleLowerCase()}`.replace("-", " ")}
+              {formatFirstStringToUpperCase(
+                title.replace("trait_", "")
+              ).replace("-", " ")}
             </h3>
             <div className="value">
               {isTraitsProperty && <span>{count}</span>}
@@ -116,7 +116,11 @@ export const FiltersRow = memo(
 
           {!isTraitsProperty && isShowProperties && (
             <>
-              <FiltersSearch isAside placeholder="Search by traits" />
+              <FiltersSearch
+                isAside
+                placeholder="Search by traits"
+                setCollectionMain={undefined}
+              />
               {traits &&
                 traits.length > 0 &&
                 traits.map((trait: traitData) => {

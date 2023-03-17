@@ -1918,21 +1918,20 @@ const IconCaret = ({ width, height, className, color, style }: svgProps) => {
 const IconLoading = ({ width, height, className, color, style }: svgProps) => {
   return (
     <svg
-      width={width ?? "12"}
-      height={height ?? "8"}
-      fill={color ?? "currentColor"}
-      className={className ?? ""}
-      style={style}
-      viewBox="0 0 32 32"
+      viewBox="0 0 25 24"
+      fill="none"
+      width="24"
+      height="24"
+      style={{
+        animation: "1s linear 0s infinite normal forwards running loadingIcon",
+      }}
     >
-      <circle
-        className="loader-spinner__path"
-        cx="16"
-        cy="16"
-        r="14"
-        fill="none"
-        strokeWidth="4"
-      ></circle>
+      <path
+        d="M7.96997 12C7.96997 14.7614 10.2085 17 12.97 17C15.7314 17 17.97 14.7614 17.97 12C17.97 9.23858 15.7314 7 12.97 7"
+        stroke="#FFF"
+        strokeWidth="2"
+        strokeLinecap="round"
+      ></path>
     </svg>
   );
 };

@@ -27,6 +27,7 @@ type SiteChatProps = {
   setIsShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
   isOpenNavMobile: boolean;
   setOpenNavMobile: React.Dispatch<React.SetStateAction<boolean>>;
+  setCollectionMain: React.Dispatch<React.SetStateAction<any>>;
   handleChange: any;
   column: number;
   toggleProperties: () => void;
@@ -35,8 +36,6 @@ type SiteChatProps = {
   isShowProperties: boolean;
   traits: traitData[];
   pushQuery: (property: string, value: string, type: "ADD" | "REMOVE") => void;
-  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  searchTerm: string;
 };
 
 export default memo(function SiteChat({
@@ -52,8 +51,7 @@ export default memo(function SiteChat({
   setOpenNavMobile,
   toggleProperties,
   isShowProperties,
-  searchTerm,
-  setSearchTerm,
+  setCollectionMain,
 }: SiteChatProps) {
   return (
     <>
@@ -124,8 +122,7 @@ export default memo(function SiteChat({
             <div className="items-center" style={{ margin: 20 }}>
               <FiltersSearch
                 placeholder="Search by collection"
-                value={searchTerm}
-                setSearchTerm={setSearchTerm}
+                setCollectionMain={setCollectionMain}
               />
             </div>
           </div>

@@ -26,7 +26,7 @@ const parseQuery = (query: {}): string => {
     .replace("]`", "]");
 };
 
-export default function useNft(pageNumber: number, query: {}) {
+export default function useNft(pageNumber: number, query: {}, collection: any) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
@@ -66,20 +66,43 @@ export default function useNft(pageNumber: number, query: {}) {
 
     let cancel: any;
 
-    const searchQuery = {
-      query_by:
-        "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
-      sort_by: "rank:asc,nftId:asc",
-      highlight_full_fields:
-        "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
-      collection: "assets_mutant-ape-yacht-club",
-      q: "*",
-      facet_by:
-        "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name,trait_traits-count,forSale,rank,nftId,sortPrice",
-      max_facet_values: 87,
-      page: pageNumber,
-      per_page: 24,
-    };
+    let searchQuery = {};
+    console.log({ collection });
+    if (!collection.traitsData) {
+      searchQuery = {
+        query_by:
+          "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
+        sort_by: "rank:asc,nftId:asc",
+        highlight_full_fields:
+          "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
+        collection: "assets_mutant-ape-yacht-club",
+        q: "*",
+        facet_by:
+          "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name,trait_traits-count,forSale,rank,nftId,sortPrice",
+        max_facet_values: 87,
+        page: pageNumber,
+        per_page: 24,
+      };
+    } else {
+      const query_by = Object.keys(collection.traitsData).map((trait) => {
+        if (trait.includes(" ")) {
+          return `trait_${trait.toLowerCase().replace(" ", "-")}`;
+        } else {
+          return `trait_${trait.toLowerCase()}`;
+        }
+      });
+      searchQuery = {
+        query_by: query_by.slice(0, query_by.length - 1).join(","),
+        sort_by: "rank:asc,nftId:asc",
+        highlight_full_fields: query_by.slice(0, query_by.length - 1).join(","),
+        collection: `assets_${collection.collectionSlug}`,
+        q: "*",
+        facet_by: `${query_by.join(",")},forSale,rank,nftId,sortPrice`,
+        max_facet_values: 87,
+        page: pageNumber,
+        per_page: 24,
+      };
+    }
 
     axios({
       method: "POST",
@@ -96,6 +119,7 @@ export default function useNft(pageNumber: number, query: {}) {
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then(({ data: { results } }) => {
+        console.log({ results });
         //! FIRST TIME FETCH DATA
         if (
           Object.keys(query).length === 0 &&
@@ -141,7 +165,7 @@ export default function useNft(pageNumber: number, query: {}) {
         setError(true);
       });
     return () => cancel();
-  }, [pageNumber, query]);
+  }, [pageNumber, query, collection]);
 
   return { loading, error, nfts, hasMore, traits, filterTraits, found };
 }

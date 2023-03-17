@@ -12,6 +12,8 @@ import { Notification } from "@/components/notification";
 import useDebounce from "@/hooks/useDebounce";
 import axios from "axios";
 import useSearchCollection from "@/hooks/useSearchCollection";
+import { useRouter } from "next/router";
+import useCollection from "@/hooks/useCollection";
 
 export default function Home() {
   const { width, height } = useWindowDimensions();
@@ -27,28 +29,31 @@ export default function Home() {
       ? 2
       : 1
     : 6;
+  const [query, setQuery] = useState({});
   const [rowGap, setRowGap] = useState(10);
   const [columnGap, setColumnGap] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
+  const [isRefetch, setIsRefetch] = useState(false);
   const [column, setColumn] = useState(columnConfig);
   const [isShowFilter, setIsShowFilter] = useState(true);
-  const [isRefetch, setIsRefetch] = useState(false);
   const [isShowProperties, setIsShowProperties] = useState(true);
-  const [query, setQuery] = useState({});
-  // const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchTermDebounce, searchTerm, setSearchTerm] = useDebounce("", 300);
+  const [collectionMain, setCollectionMain] = useState<any>({});
+
+  const router = useRouter();
+
+  const { collection, loading: loadingCollection } = useCollection(
+    router.query.collection as string
+  );
 
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
-    query
+    query,
+    collection
   );
 
-  const { collections } = useSearchCollection(searchTermDebounce);
-  console.log({ collections });
-
   const toggleFilter = useCallback(() => {
-    // if (loading) return;
-    // setIsShowFilter((prev) => !prev);
+    if (loading) return;
+    setIsShowFilter((prev) => !prev);
   }, [loading]);
 
   const toggleProperties = useCallback(() => {
@@ -152,12 +157,10 @@ export default function Home() {
           <Header
             column={column}
             loading={loading}
-            searchTerm={searchTerm}
             columnConfig={columnConfig}
             toggleFilter={toggleFilter}
             isShowFilter={isShowFilter}
             toggleColumns={toggleColumns}
-            setSearchTerm={setSearchTerm}
             isOpenNavMobile={isOpenNavMobile}
             setOpenNavMobile={setOpenNavMobile}
           />
@@ -208,15 +211,14 @@ export default function Home() {
         traits={traits}
         columnGap={columnGap}
         pushQuery={pushQuery}
-        searchTerm={searchTerm}
         isShowFilter={isShowFilter}
         handleChange={handleChange}
-        setSearchTerm={setSearchTerm}
         setIsShowFilter={setIsShowFilter}
         isOpenNavMobile={isOpenNavMobile}
         setOpenNavMobile={setOpenNavMobile}
         toggleProperties={toggleProperties}
         isShowProperties={isShowProperties}
+        setCollectionMain={setCollectionMain}
       />
     </div>
   );
