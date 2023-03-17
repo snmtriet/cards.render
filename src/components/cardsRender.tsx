@@ -18,6 +18,7 @@ type CardsRenderProps = {
     w: number;
     h: number;
   };
+  index: number;
 };
 
 type CardWrapperProps = {
@@ -28,11 +29,12 @@ type CardWrapperProps = {
     h: number;
   };
   isImageLoaded: boolean;
+  index: number;
 };
 
 export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
-    const { style, item, cardOffset } = props;
+    const { style, item, cardOffset, index } = props;
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     return (
@@ -41,6 +43,7 @@ export const CardsRender = React.forwardRef(
           <div className="card__container" style={style} ref={ref}>
             <CardWrapper
               item={item}
+              index={index}
               cardOffset={cardOffset}
               isImageLoaded={isImageLoaded}
               setIsImageLoaded={setIsImageLoaded}
@@ -50,6 +53,7 @@ export const CardsRender = React.forwardRef(
           <div className="card__container" style={style}>
             <CardWrapper
               item={item}
+              index={index}
               cardOffset={cardOffset}
               isImageLoaded={isImageLoaded}
               setIsImageLoaded={setIsImageLoaded}
@@ -63,24 +67,41 @@ export const CardsRender = React.forwardRef(
 
 const CardWrapper = ({
   item,
+  index,
   cardOffset,
   isImageLoaded,
   setIsImageLoaded,
 }: CardWrapperProps) => {
   const {
-    document: { nftId, image, collectionName, rarityScore, rank },
+    document: {
+      rank,
+      nftId,
+      image,
+      collectionName,
+      rarityScore,
+      collectionSlug,
+    },
   } = item;
   const img = image.replace(
     "https://ipfs.io/ipfs/",
     "https://cronoscorgiclub.mypinata.cloud/ipfs/"
   );
-  const itemRef: any = useRef(nftId);
+  const uniqueRef = useRef(nftId);
+  const cardOffsetRef = useRef(cardOffset);
+  const unique = `${collectionSlug}#${nftId}#${index}#${img}`;
   useEffect(() => {
-    if (JSON.stringify(itemRef.current) !== JSON.stringify(nftId)) {
+    if (JSON.stringify(uniqueRef.current) !== JSON.stringify(unique)) {
       setIsImageLoaded(false);
-      itemRef.current = nftId;
+      uniqueRef.current = unique;
     }
-  }, [item, nftId]);
+    if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
+      setIsImageLoaded(false);
+      setTimeout(() => {
+        setIsImageLoaded(true);
+      }, 1000);
+      cardOffsetRef.current = cardOffset;
+    }
+  }, [item, cardOffset]);
 
   return (
     <div className="card__wrapper">

@@ -23,7 +23,6 @@ export const GridCard = React.forwardRef(
 
     useEffect(() => {
       const grid = document.getElementById("dynamic-grid");
-
       if (grid) {
         let { clientWidth } = grid;
         let cardWidth = (clientWidth - rowGap * (column - 1)) / column;
@@ -70,6 +69,7 @@ export const GridCard = React.forwardRef(
               cardOffset={cardOffset}
               key={index}
               item={item}
+              index={index}
               style={{
                 position: "absolute",
                 top: item.top,
