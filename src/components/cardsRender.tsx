@@ -22,25 +22,38 @@ type CardsRenderProps = {
 
 type CardWrapperProps = {
   item: any;
+  setIsImageLoaded: Dispatch<SetStateAction<boolean>>;
   cardOffset: {
     w: number;
     h: number;
   };
+  isImageLoaded: boolean;
 };
 
 export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset } = props;
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     return (
       <>
         {ref ? (
           <div className="card__container" style={style} ref={ref}>
-            <CardWrapper item={item} cardOffset={cardOffset} />
+            <CardWrapper
+              item={item}
+              cardOffset={cardOffset}
+              isImageLoaded={isImageLoaded}
+              setIsImageLoaded={setIsImageLoaded}
+            />
           </div>
         ) : (
           <div className="card__container" style={style}>
-            <CardWrapper item={item} cardOffset={cardOffset} />
+            <CardWrapper
+              item={item}
+              cardOffset={cardOffset}
+              isImageLoaded={isImageLoaded}
+              setIsImageLoaded={setIsImageLoaded}
+            />
           </div>
         )}
       </>
@@ -48,31 +61,26 @@ export const CardsRender = React.forwardRef(
   }
 );
 
-const CardWrapper = ({ item, cardOffset }: CardWrapperProps) => {
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-
+const CardWrapper = ({
+  item,
+  cardOffset,
+  isImageLoaded,
+  setIsImageLoaded,
+}: CardWrapperProps) => {
   const {
-    document: { nftId, image, collectionName, rank, rarityScore },
+    document: { nftId, image, collectionName },
   } = item;
   const img = image.replace(
     "https://ipfs.io/ipfs/",
     "https://cronoscorgiclub.mypinata.cloud/ipfs/"
   );
-  const nftIdRef: any = useRef(nftId);
-  const cardOffsetRef: any = useRef(cardOffset);
+  const itemRef: any = useRef(nftId);
   useEffect(() => {
-    if (JSON.stringify(nftIdRef.current) !== JSON.stringify(nftId)) {
+    if (JSON.stringify(itemRef.current) !== JSON.stringify(nftId)) {
       setIsImageLoaded(false);
-      nftIdRef.current = nftId;
+      itemRef.current = nftId;
     }
-    if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
-      setIsImageLoaded(false);
-      setTimeout(() => {
-        setIsImageLoaded(true);
-      }, 1000);
-      cardOffsetRef.current = cardOffset;
-    }
-  }, [nftId]);
+  }, [item, nftId]);
 
   return (
     <div className="card__wrapper">
@@ -93,9 +101,7 @@ const CardWrapper = ({ item, cardOffset }: CardWrapperProps) => {
               `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.webp`
             }
             onLoad={() => {
-              setTimeout(() => {
-                setIsImageLoaded(true);
-              }, 1000);
+              setIsImageLoaded(true);
             }}
             onError={() => {
               setIsImageLoaded(false);
@@ -110,33 +116,14 @@ const CardWrapper = ({ item, cardOffset }: CardWrapperProps) => {
         <div className="card__info">
           <div className="card__title">
             <div className="card__titleTop">
-              <span className="card__collection">{collectionName}</span>
+              <span className="card__collection">Bored Ape Yacht Club</span>
               <div>
                 <Icon />
               </div>
             </div>
-            <span className="card__nft">
-              {collectionName.split(" ")} #{nftId}
-            </span>
+            <span className="card__nft">BoredApeYachtClub #{nftId}</span>
           </div>
-          <div className="card__prize">
-            <div className="flex-box">
-              <div>
-                <span>Rank</span>
-              </div>
-              <div>
-                <span>Score</span>
-              </div>
-            </div>
-            <div className="flex-box value">
-              <div>
-                <span>#{rank}</span>
-              </div>
-              <div>
-                <span>{rarityScore}</span>
-              </div>
-            </div>
-          </div>
+          <div className="card__prize"></div>
         </div>
       </div>
     </div>
