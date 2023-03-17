@@ -126,7 +126,9 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
           Object.keys(queryRef.current).length === 0
         ) {
           setTraits(results[0].facet_counts);
-          setNfts(results[0].hits);
+          setNfts((prevNfts: any) => {
+            return [...prevNfts, ...results[0].hits];
+          });
           setFound(results[0].found);
         }
 
