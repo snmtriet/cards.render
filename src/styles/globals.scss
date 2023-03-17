@@ -7,6 +7,25 @@
   --max-width: 1100px;
 }
 
+.item-enter {
+  opacity: 0;
+  transform: translateY(500px);
+}
+.item-enter-active {
+  opacity: 1;
+  transform: translateY(0px);
+  transition: all 0.4s;
+}
+.item-exit {
+  opacity: 1;
+  transform: translateY(0px);
+}
+.item-exit-active {
+  opacity: 0;
+  transform: translateY(500px);
+  transition: all 0.4s;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

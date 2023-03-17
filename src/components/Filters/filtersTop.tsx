@@ -9,6 +9,8 @@ type FiltersProps = {
   isShowFilter: boolean;
   toggleFilter: () => void;
   toggleColumns: (type: "default" | "more") => void;
+  setSearchTerm: React.Dispatch<SetStateAction<string>>;
+  searchTerm: string;
 };
 
 export const FiltersTop = memo(
@@ -19,6 +21,8 @@ export const FiltersTop = memo(
     isShowFilter,
     columnConfig,
     toggleColumns,
+    searchTerm,
+    setSearchTerm,
   }: FiltersProps) => {
     return (
       <div className="filters__container" id="filters-top">
@@ -34,7 +38,11 @@ export const FiltersTop = memo(
               <span>Last update: 22 seconds ago</span>
             </div>
           </div>
-          <FiltersSearch placeholder="Search by NFTs" />
+          <FiltersSearch
+            value={searchTerm}
+            placeholder="Search by NFTs"
+            setSearchTerm={setSearchTerm}
+          />
           <div className="filters__list">
             <div
               className="active"

@@ -1,12 +1,19 @@
-import React from "react";
+import React, { SetStateAction } from "react";
 import classNames from "classnames";
 
 type FiltersSearchProps = {
   isAside?: boolean;
   placeholder?: string;
+  setSearchTerm: React.Dispatch<SetStateAction<string>>;
+  value: string;
 };
 
-export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
+export const FiltersSearch = ({
+  isAside,
+  placeholder,
+  setSearchTerm,
+  value,
+}: FiltersSearchProps) => {
   return (
     <div
       className={classNames("filters__search", {
@@ -23,7 +30,12 @@ export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
           ></path>
         </svg>
       </div>
-      <input type="text" placeholder={placeholder} />
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
+      />
     </div>
   );
 };

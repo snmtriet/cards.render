@@ -12,6 +12,8 @@ interface HeaderProps {
   toggleFilter: () => void;
   isShowFilter: boolean;
   toggleColumns: (type: "default" | "more") => void;
+  setSearchTerm: React.Dispatch<SetStateAction<string>>;
+  searchTerm: string;
 }
 
 export default memo(function Header({
@@ -23,6 +25,8 @@ export default memo(function Header({
   toggleFilter,
   isShowFilter,
   toggleColumns,
+  searchTerm,
+  setSearchTerm,
 }: HeaderProps) {
   return (
     <>
@@ -33,6 +37,8 @@ export default memo(function Header({
         toggleFilter={toggleFilter}
         isShowFilter={isShowFilter}
         toggleColumns={toggleColumns}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
       <HeaderMobile
         setOpenNavMobile={setOpenNavMobile}

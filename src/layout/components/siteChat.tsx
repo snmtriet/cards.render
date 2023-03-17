@@ -8,6 +8,20 @@ import { IconChat, IconCloseCSGO } from "./svg";
 import Input from "@/components/input";
 import { FiltersRow, FiltersSearch } from "@/components/Filters";
 
+type traitData = {
+  counts: traitType[];
+  field_name: string;
+  stats: {
+    total_values: number;
+  };
+};
+
+type traitType = {
+  count: number;
+  highlighted: string;
+  value: string;
+};
+
 type SiteChatProps = {
   isShowFilter: boolean;
   setIsShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,12 +29,14 @@ type SiteChatProps = {
   setOpenNavMobile: React.Dispatch<React.SetStateAction<boolean>>;
   handleChange: any;
   column: number;
-  toggleProperties: any;
-  rowGap: any;
-  columnGap: any;
-  isShowProperties: any;
-  traits: any;
-  pushQuery: any;
+  toggleProperties: () => void;
+  rowGap: number;
+  columnGap: number;
+  isShowProperties: boolean;
+  traits: traitData[];
+  pushQuery: (property: string, value: string, type: "ADD" | "REMOVE") => void;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+  searchTerm: string;
 };
 
 export default memo(function SiteChat({
@@ -36,6 +52,8 @@ export default memo(function SiteChat({
   setOpenNavMobile,
   toggleProperties,
   isShowProperties,
+  searchTerm,
+  setSearchTerm,
 }: SiteChatProps) {
   return (
     <>
@@ -104,7 +122,11 @@ export default memo(function SiteChat({
         <div className="nav-tab__container">
           <div className="feature-list">
             <div className="items-center" style={{ margin: 20 }}>
-              <FiltersSearch placeholder="Search by collection" />
+              <FiltersSearch
+                placeholder="Search by collection"
+                value={searchTerm}
+                setSearchTerm={setSearchTerm}
+              />
             </div>
           </div>
         </div>

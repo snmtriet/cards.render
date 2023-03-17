@@ -9,12 +9,13 @@ import SiteChat from "@/layout/components/siteChat";
 import Header from "@/layout/components/Header/header";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { Notification } from "@/components/notification";
+import useDebounce from "@/hooks/useDebounce";
+import axios from "axios";
+import useSearchCollection from "@/hooks/useSearchCollection";
 
 export default function Home() {
   const { width, height } = useWindowDimensions();
-
   const [isOpenNavMobile, setOpenNavMobile] = useState(false);
-
   const columnConfig = width
     ? width > 1440
       ? 6
@@ -34,11 +35,16 @@ export default function Home() {
   const [isRefetch, setIsRefetch] = useState(false);
   const [isShowProperties, setIsShowProperties] = useState(true);
   const [query, setQuery] = useState({});
+  // const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTermDebounce, searchTerm, setSearchTerm] = useDebounce("", 300);
 
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
     query
   );
+
+  const { collections } = useSearchCollection(searchTermDebounce);
+  console.log({ collections });
 
   const toggleFilter = useCallback(() => {
     // if (loading) return;
@@ -146,10 +152,12 @@ export default function Home() {
           <Header
             column={column}
             loading={loading}
+            searchTerm={searchTerm}
             columnConfig={columnConfig}
             toggleFilter={toggleFilter}
             isShowFilter={isShowFilter}
             toggleColumns={toggleColumns}
+            setSearchTerm={setSearchTerm}
             isOpenNavMobile={isOpenNavMobile}
             setOpenNavMobile={setOpenNavMobile}
           />
@@ -195,18 +203,20 @@ export default function Home() {
         </div>
       </div>
       <SiteChat
+        rowGap={rowGap}
+        column={column}
+        traits={traits}
+        columnGap={columnGap}
+        pushQuery={pushQuery}
+        searchTerm={searchTerm}
         isShowFilter={isShowFilter}
+        handleChange={handleChange}
+        setSearchTerm={setSearchTerm}
         setIsShowFilter={setIsShowFilter}
         isOpenNavMobile={isOpenNavMobile}
         setOpenNavMobile={setOpenNavMobile}
-        column={column}
-        columnGap={columnGap}
-        pushQuery={pushQuery}
-        handleChange={handleChange}
-        rowGap={rowGap}
         toggleProperties={toggleProperties}
         isShowProperties={isShowProperties}
-        traits={traits}
       />
     </div>
   );

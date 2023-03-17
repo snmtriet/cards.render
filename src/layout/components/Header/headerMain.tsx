@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { memo } from "react";
+import React, { memo, SetStateAction } from "react";
 
 import { FiltersTop } from "@/components/Filters/filtersTop";
 
@@ -10,6 +10,8 @@ interface HeaderMainProps {
   toggleFilter: () => void;
   isShowFilter: boolean;
   toggleColumns: (type: "default" | "more") => void;
+  setSearchTerm: React.Dispatch<SetStateAction<string>>;
+  searchTerm: string;
 }
 
 const HeaderMain = ({
@@ -19,6 +21,8 @@ const HeaderMain = ({
   toggleFilter,
   isShowFilter,
   toggleColumns,
+  setSearchTerm,
+  searchTerm,
 }: HeaderMainProps) => {
   return (
     <div className="header-container">
@@ -31,6 +35,8 @@ const HeaderMain = ({
             toggleFilter={toggleFilter}
             isShowFilter={isShowFilter}
             toggleColumns={toggleColumns}
+            setSearchTerm={setSearchTerm}
+            searchTerm={searchTerm}
           />
         </div>
       </div>

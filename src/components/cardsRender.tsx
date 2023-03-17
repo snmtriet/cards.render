@@ -35,32 +35,19 @@ type CardWrapperProps = {
 export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset, index } = props;
+
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     return (
-      <>
-        {ref ? (
-          <div className="card__container" style={style} ref={ref}>
-            <CardWrapper
-              item={item}
-              index={index}
-              cardOffset={cardOffset}
-              isImageLoaded={isImageLoaded}
-              setIsImageLoaded={setIsImageLoaded}
-            />
-          </div>
-        ) : (
-          <div className="card__container" style={style}>
-            <CardWrapper
-              item={item}
-              index={index}
-              cardOffset={cardOffset}
-              isImageLoaded={isImageLoaded}
-              setIsImageLoaded={setIsImageLoaded}
-            />
-          </div>
-        )}
-      </>
+      <div className="card__container" style={style} ref={ref}>
+        <CardWrapper
+          item={item}
+          index={index}
+          cardOffset={cardOffset}
+          isImageLoaded={isImageLoaded}
+          setIsImageLoaded={setIsImageLoaded}
+        />
+      </div>
     );
   }
 );
@@ -90,10 +77,11 @@ const CardWrapper = ({
   const cardOffsetRef = useRef(cardOffset);
   const unique = `${collectionSlug}#${nftId}#${index}#${img}`;
   useEffect(() => {
-    if (JSON.stringify(uniqueRef.current) !== JSON.stringify(unique)) {
-      setIsImageLoaded(false);
-      uniqueRef.current = unique;
-    }
+    // if (JSON.stringify(uniqueRef.current) !== JSON.stringify(unique)) {
+    //   setIsImageLoaded(false);
+    //   uniqueRef.current = unique;
+    // }
+
     if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
       setIsImageLoaded(false);
       setTimeout(() => {

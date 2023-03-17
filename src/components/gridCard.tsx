@@ -1,8 +1,8 @@
 /* eslint-disable react/display-name */
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useState } from "react";
 import { CardsRender } from "./cardsRender";
-
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 type GridCardProps = {
   data: any;
   column: number;
@@ -37,16 +37,27 @@ export const GridCard = React.forwardRef(
           } else {
             left = left + (cardWidth + rowGap);
           }
-          return {
-            ...item,
-            row: rowIndex,
-            top: (rowIndex - 2) * (cardHeight + columnGap),
-            left: left,
-          };
+          if (index + 1 === data.length) {
+            return {
+              ...item,
+              row: rowIndex,
+              top: (rowIndex - 2) * (cardHeight + columnGap),
+              left: left,
+              nodeRef: ref,
+            };
+          } else {
+            return {
+              ...item,
+              row: rowIndex,
+              top: (rowIndex - 2) * (cardHeight + columnGap),
+              left: left,
+              nodeRef: createRef(),
+            };
+          }
         });
         setDataRender(newArray);
       }
-    }, [column, data, rowGap, columnGap, width, isRefetch]);
+    }, [column, data, rowGap, columnGap, width, isRefetch, ref]);
 
     function calculateHeightGrid() {
       return Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap);
@@ -62,24 +73,33 @@ export const GridCard = React.forwardRef(
           maxHeight: calculateHeightGrid(),
         }}
       >
-        {dataRender.map((item: any, index: number) => {
-          return (
-            <CardsRender
-              ref={dataRender.length === index + 1 ? ref : undefined}
-              cardOffset={cardOffset}
-              key={index}
-              item={item}
-              index={index}
-              style={{
-                position: "absolute",
-                top: item.top,
-                left: item.left,
-                width: cardOffset.w,
-                height: cardOffset.h,
-              }}
-            />
-          );
-        })}
+        <TransitionGroup className="todo-list">
+          {dataRender.map((item: any, index: number) => {
+            return (
+              <CSSTransition
+                key={`${item.document.nftId}-${index}-${item.document.image}`}
+                nodeRef={item.nodeRef}
+                timeout={500}
+                classNames="item"
+              >
+                <CardsRender
+                  ref={item.nodeRef}
+                  cardOffset={cardOffset}
+                  key={`${item.document.nftId}-${index}-${item.document.image}`}
+                  item={item}
+                  index={index}
+                  style={{
+                    position: "absolute",
+                    top: item.top,
+                    left: item.left,
+                    width: cardOffset.w,
+                    height: cardOffset.h,
+                  }}
+                />
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
       </div>
     );
   }
