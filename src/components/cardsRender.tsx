@@ -67,6 +67,7 @@ const CardWrapper = ({
   isImageLoaded,
   setIsImageLoaded,
 }: CardWrapperProps) => {
+  console.log("🍕 ~ isImageLoaded:", isImageLoaded);
   const {
     document: { nftId, image, collectionName, rank, rarityScore },
   } = item;
@@ -88,7 +89,7 @@ const CardWrapper = ({
       }, 1000);
       cardOffsetRef.current = cardOffset;
     }
-  }, [item, nftId, cardOffset]);
+  }, [item, nftId, cardOffset, image]);
 
   return (
     <div className="card__wrapper">

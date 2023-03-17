@@ -47,7 +47,6 @@ export default function useNft(pageNumber: number, query: {}) {
             ...trait,
             counts: trait.counts.map((traitType: traitType) => {
               if (traitType.value === value) {
-                console.log(traitType);
                 return { ...traitType, checked: type === "ADD" ? true : false };
               }
               return traitType;

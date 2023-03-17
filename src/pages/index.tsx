@@ -112,7 +112,7 @@ export default function Home() {
       filterTraits(trait, value, type);
       setPageNumber(1);
     },
-    [filterTraits]
+    []
   );
 
   const observer: any = useRef();
