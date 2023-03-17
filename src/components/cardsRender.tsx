@@ -68,7 +68,7 @@ const CardWrapper = ({
   setIsImageLoaded,
 }: CardWrapperProps) => {
   const {
-    document: { nftId, image, collectionName },
+    document: { nftId, image, collectionName, rarityScore, rank },
   } = item;
   const img = image.replace(
     "https://ipfs.io/ipfs/",
@@ -123,7 +123,24 @@ const CardWrapper = ({
             </div>
             <span className="card__nft">BoredApeYachtClub #{nftId}</span>
           </div>
-          <div className="card__prize"></div>
+          <div className="card__prize">
+            <div className="flex-box">
+              <div>
+                <span>Rank</span>
+              </div>
+              <div>
+                <span>Score</span>
+              </div>
+            </div>
+            <div className="flex-box value">
+              <div>
+                <span>#{rank}</span>
+              </div>
+              <div>
+                <span>{rarityScore}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
