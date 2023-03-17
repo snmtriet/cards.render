@@ -30,9 +30,7 @@ export default function Home() {
   const [columnGap, setColumnGap] = useState(10);
   const [pageNumber, setPageNumber] = useState(1);
   const [column, setColumn] = useState(columnConfig);
-  const [isShowFilter, setIsShowFilter] = useState(
-    width && width > 992 ? true : false
-  );
+  const [isShowFilter, setIsShowFilter] = useState(true);
   const [isRefetch, setIsRefetch] = useState(false);
   const [isShowProperties, setIsShowProperties] = useState(true);
   const [query, setQuery] = useState({});
@@ -43,8 +41,8 @@ export default function Home() {
   );
 
   const toggleFilter = useCallback(() => {
-    if (loading) return;
-    setIsShowFilter((prev) => !prev);
+    // if (loading) return;
+    // setIsShowFilter((prev) => !prev);
   }, [loading]);
 
   const toggleProperties = useCallback(() => {
@@ -60,7 +58,7 @@ export default function Home() {
 
   useEffect(() => {
     setColumn(columnConfig);
-
+    width && width < 992 && setIsShowFilter(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width]);
 
@@ -80,7 +78,7 @@ export default function Home() {
 
   const pushQuery = useCallback(
     (trait: string, value: string, type: "ADD" | "REMOVE") => {
-      if (type === "ADD")
+      if (type === "ADD") {
         setQuery((prev) => {
           const prevTraits: string[] | undefined =
             prev[trait as keyof typeof prev];
@@ -89,8 +87,7 @@ export default function Home() {
             [trait]: prevTraits ? [prevTraits, value].flat() : [value],
           };
         });
-      filterTraits(trait, value, type);
-      setPageNumber(1);
+      }
       if (type === "REMOVE") {
         setQuery((prev) => {
           const prevTraits: string[] = prev[trait as keyof typeof prev];
@@ -111,8 +108,9 @@ export default function Home() {
               }, {});
           }
         });
-        setPageNumber(1);
       }
+      filterTraits(trait, value, type);
+      setPageNumber(1);
     },
     [filterTraits]
   );
