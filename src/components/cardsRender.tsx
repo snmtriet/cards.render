@@ -22,38 +22,25 @@ type CardsRenderProps = {
 
 type CardWrapperProps = {
   item: any;
-  setIsImageLoaded: Dispatch<SetStateAction<boolean>>;
   cardOffset: {
     w: number;
     h: number;
   };
-  isImageLoaded: boolean;
 };
 
 export const CardsRender = React.forwardRef(
   (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset } = props;
-    const [isImageLoaded, setIsImageLoaded] = useState(false);
 
     return (
       <>
         {ref ? (
           <div className="card__container" style={style} ref={ref}>
-            <CardWrapper
-              item={item}
-              cardOffset={cardOffset}
-              isImageLoaded={isImageLoaded}
-              setIsImageLoaded={setIsImageLoaded}
-            />
+            <CardWrapper item={item} cardOffset={cardOffset} />
           </div>
         ) : (
           <div className="card__container" style={style}>
-            <CardWrapper
-              item={item}
-              cardOffset={cardOffset}
-              isImageLoaded={isImageLoaded}
-              setIsImageLoaded={setIsImageLoaded}
-            />
+            <CardWrapper item={item} cardOffset={cardOffset} />
           </div>
         )}
       </>
@@ -61,13 +48,9 @@ export const CardsRender = React.forwardRef(
   }
 );
 
-const CardWrapper = ({
-  item,
-  cardOffset,
-  isImageLoaded,
-  setIsImageLoaded,
-}: CardWrapperProps) => {
-  console.log("🍕 ~ isImageLoaded:", isImageLoaded);
+const CardWrapper = ({ item, cardOffset }: CardWrapperProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
   const {
     document: { nftId, image, collectionName, rank, rarityScore },
   } = item;
@@ -75,12 +58,12 @@ const CardWrapper = ({
     "https://ipfs.io/ipfs/",
     "https://cronoscorgiclub.mypinata.cloud/ipfs/"
   );
-  const itemRef: any = useRef(nftId);
+  const nftIdRef: any = useRef(nftId);
   const cardOffsetRef: any = useRef(cardOffset);
   useEffect(() => {
-    if (JSON.stringify(itemRef.current) !== JSON.stringify(nftId)) {
+    if (JSON.stringify(nftIdRef.current) !== JSON.stringify(nftId)) {
       setIsImageLoaded(false);
-      itemRef.current = nftId;
+      nftIdRef.current = nftId;
     }
     if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
       setIsImageLoaded(false);
@@ -89,7 +72,7 @@ const CardWrapper = ({
       }, 1000);
       cardOffsetRef.current = cardOffset;
     }
-  }, [item, nftId, cardOffset, image]);
+  }, [nftId]);
 
   return (
     <div className="card__wrapper">
@@ -110,7 +93,9 @@ const CardWrapper = ({
               `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.webp`
             }
             onLoad={() => {
-              setIsImageLoaded(true);
+              setTimeout(() => {
+                setIsImageLoaded(true);
+              }, 1000);
             }}
             onError={() => {
               setIsImageLoaded(false);
