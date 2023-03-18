@@ -11,6 +11,7 @@ export default async function handler(
     const jsonDirectory = path.join(process.cwd(), "collection.json");
     const fileContents = await fs.readFile(jsonDirectory, "utf8");
     const dataParse = JSON.parse(fileContents);
+
     if (dataParse[name as string])
       res.status(200).json(dataParse[name as string]);
     else res.status(200).json({ message: "Not found collection bro !" });
@@ -23,7 +24,10 @@ export default async function handler(
     const collectionsDataParsed = JSON.parse(collectionsData);
     if (collectionsDataParsed[newCollection.collectionSlug]) {
       console.log("Collection already exist !");
-      res.status(200).json({ message: "Collection already exist !" });
+      res.status(200).json({
+        message: "Collection already exist !",
+        found: collectionsDataParsed[newCollection.collectionSlug],
+      });
       return;
     } else {
       await fs.writeFile(

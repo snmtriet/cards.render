@@ -125,13 +125,13 @@ export default function useNft(
       };
     }
 
-    // axios({
-    //   method: "GET",
-    //   url: "http://localhost:3000/api/collections",
-    //   params: { name: collection.collectionSlug },
-    // }).then(({ data }) => {
-    //   // console.log(data);
-    // });
+    axios({
+      method: "GET",
+      url: `${process.env.NEXT_PUBLIC_FE_URL}/api/collections`,
+      params: { name: collection.collectionSlug },
+    }).then(({ data }) => {
+      console.log("Insert new collection", data);
+    });
 
     axios({
       method: "POST",
