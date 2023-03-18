@@ -60,7 +60,7 @@ export default function Home() {
     if (isFoundedCollection) {
       setIsShowProperties((prev) => !prev);
     }
-  }, []);
+  }, [isFoundedCollection]);
 
   const toggleColumns = useCallback(
     (type: "default" | "more") => {

@@ -77,7 +77,6 @@ export default function useNft(
     }
     setLoading(true);
     setError(false);
-    console.log({ query, collection, pageNumber });
     const isEqualQuery =
       JSON.stringify(queryRef.current) === JSON.stringify(query);
 
@@ -129,8 +128,6 @@ export default function useNft(
       method: "GET",
       url: `${process.env.NEXT_PUBLIC_FE_URL}/api/collections`,
       params: { name: collection.collectionSlug },
-    }).then(({ data }) => {
-      console.log("Insert new collection", data);
     });
 
     axios({
