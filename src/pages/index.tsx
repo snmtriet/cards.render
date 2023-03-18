@@ -42,8 +42,6 @@ export default function Home() {
     collectionQuery ? true : false
   );
 
-  console.log("🍕 ~ collectionQuery:", collectionQuery);
-
   const isFoundedCollection =
     collections[collectionQuery as keyof typeof collections];
 

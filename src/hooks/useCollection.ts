@@ -36,7 +36,7 @@ export default function useCollection(collectionName: string) {
         if (data) {
           axios({
             method: "POST",
-            url: "http://localhost:3000/api/collections",
+            url: `${process.env.NEXT_PUBLIC_FE_URL}/api/collections`,
             data: data,
           });
         }
