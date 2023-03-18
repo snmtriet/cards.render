@@ -40,6 +40,9 @@ export default function useNft(
   const [hasMore, setHasMore] = useState(false);
   const queryRef = useRef({} as any);
   const collectionRef = useRef("");
+  const collectionSlugRef = useRef<string>("");
+
+  const queryStringRef = useRef<string>("");
 
   let nftsClone: any[] = nfts;
   let pageNumberClone: number = pageNumber;
@@ -71,10 +74,6 @@ export default function useNft(
     useCollection(collectionSlug);
 
   useEffect(() => {
-    if (!collectionSlug) {
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(false);
     const isEqualQuery =
@@ -123,12 +122,6 @@ export default function useNft(
         per_page: 24,
       };
     }
-
-    axios({
-      method: "GET",
-      url: `${process.env.NEXT_PUBLIC_FE_URL}/api/collections`,
-      params: { name: collection.collectionSlug },
-    });
 
     axios({
       method: "POST",

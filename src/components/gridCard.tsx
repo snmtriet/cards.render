@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, forwardRef, memo, useEffect, useState } from "react";
 import { CardsRender } from "./cardsRender";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 type GridCardProps = {
@@ -11,8 +11,8 @@ type GridCardProps = {
   isRefetch: boolean;
 };
 
-export const GridCard = React.forwardRef(
-  (props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
+export const GridCard = memo(
+  forwardRef((props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
     const { data, column, rowGap, columnGap, isRefetch } = props;
     const [cardOffset, setCardOffset] = useState({
       w: 0,
@@ -20,6 +20,7 @@ export const GridCard = React.forwardRef(
     });
     const [dataRender, setDataRender] = useState([]);
     const { width } = useWindowDimensions();
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
       const grid = document.getElementById("dynamic-grid");
@@ -30,10 +31,16 @@ export const GridCard = React.forwardRef(
         setCardOffset({ w: cardWidth, h: cardHeight });
         let rowIndex = 1;
         let left = 0;
+        let count = 0;
         const newArray =
           data &&
           data.length > 0 &&
           data.map((item: any, index: number) => {
+            if (count > 24) {
+              count = 0;
+            } else {
+              count++;
+            }
             if (Number.isInteger(index / column)) {
               rowIndex++;
               left = 0;
@@ -47,6 +54,7 @@ export const GridCard = React.forwardRef(
                 top: (rowIndex - 2) * (cardHeight + columnGap),
                 left: left,
                 nodeRef: ref,
+                count,
               };
             } else {
               return {
@@ -55,9 +63,11 @@ export const GridCard = React.forwardRef(
                 top: (rowIndex - 2) * (cardHeight + columnGap),
                 left: left,
                 nodeRef: createRef(),
+                count,
               };
             }
           });
+
         setDataRender(newArray);
       }
     }, [column, data, rowGap, columnGap, width, isRefetch, ref]);
@@ -112,5 +122,5 @@ export const GridCard = React.forwardRef(
         </TransitionGroup>
       </div>
     );
-  }
+  })
 );

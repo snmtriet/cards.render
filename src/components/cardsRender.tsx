@@ -3,13 +3,14 @@
 /* eslint-disable @next/next/no-img-element */
 import React, {
   CSSProperties,
-  Dispatch,
-  SetStateAction,
+  forwardRef,
+  memo,
   useEffect,
   useRef,
   useState,
 } from "react";
 import classNames from "classnames";
+import IsImageOk from "@/utils/checkImage";
 
 type CardsRenderProps = {
   style?: CSSProperties;
@@ -21,150 +22,121 @@ type CardsRenderProps = {
   index: number;
 };
 
-type CardWrapperProps = {
-  item: any;
-  setIsImageLoaded: Dispatch<SetStateAction<boolean>>;
-  cardOffset: {
-    w: number;
-    h: number;
-  };
-  isImageLoaded: boolean;
-  index: number;
-};
-
-export const CardsRender = React.forwardRef(
-  (props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
+export const CardsRender = memo(
+  forwardRef((props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
     const { style, item, cardOffset, index } = props;
+    const cardOffsetRef = useRef(cardOffset);
+
+    const {
+      document: {
+        rank,
+        nftId,
+        image,
+        collectionName,
+        rarityScore,
+        collectionSlug,
+        url,
+      },
+      count,
+    } = item;
+
+    const [, , , , collectionAddress, tokenId] = url.split("/");
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
+    const img = image.includes("/ipfs/")
+      ? image.replace(
+          image.slice(0, image.indexOf("/ipfs/")),
+          " https://cronoscorgiclub.mypinata.cloud"
+        )
+      : image.replace(
+          "https://ipfs.io/ipfs/",
+          "https://cronoscorgiclub.mypinata.cloud/ipfs/"
+        );
+
+    // const { nftOpensea } = useNftOpensea(collectionAddress, tokenId);
+
+    useEffect(() => {
+      if (
+        JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)
+      ) {
+        setIsImageLoaded(false);
+        setTimeout(() => {
+          setIsImageLoaded(true);
+        }, 1000);
+        cardOffsetRef.current = cardOffset;
+      }
+    }, [item, cardOffset]);
+
     return (
       <div className="card__container" style={style} ref={ref}>
-        <CardWrapper
-          item={item}
-          index={index}
-          cardOffset={cardOffset}
-          isImageLoaded={isImageLoaded}
-          setIsImageLoaded={setIsImageLoaded}
-        />
+        <div className="card__wrapper">
+          <div className="card__link">
+            <div
+              className={classNames("card__image", {
+                isLoading: !isImageLoaded,
+              })}
+              style={{
+                width: cardOffset.w,
+                height: cardOffset.h - 150,
+              }}
+            >
+              <img
+                src={
+                  img ||
+                  `https://media.raritysniper.com/${collectionSlug}/${nftId}-600.png`
+                }
+                onLoad={() => {
+                  setIsImageLoaded(true);
+                }}
+                onError={() => {
+                  setIsImageLoaded(false);
+                  IsImageOk(collectionAddress, nftId, count);
+                }}
+                id={nftId}
+                style={{ opacity: isImageLoaded ? 1 : 0 }}
+                referrerPolicy="no-referrer"
+                loading="lazy"
+                alt="card"
+              />
+            </div>
+            <div className="card__info">
+              <div className="card__title">
+                <div className="card__titleTop">
+                  <span className="card__collection">{collectionName}</span>
+                  <div>
+                    <Icon />
+                  </div>
+                </div>
+                <span className="card__nft">
+                  {collectionName.split(" ")} #{nftId}
+                </span>
+              </div>
+              <div className="card__prize">
+                <div className="flex-box">
+                  <div>
+                    <span>Rank</span>
+                  </div>
+                  <div>
+                    <span>Score</span>
+                  </div>
+                </div>
+                <div className="flex-box value">
+                  <div>
+                    <span>#{rank}</span>
+                  </div>
+                  <div>
+                    <span>{rarityScore}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
-  }
+  })
 );
-
-const CardWrapper = ({
-  item,
-  index,
-  cardOffset,
-  isImageLoaded,
-  setIsImageLoaded,
-}: CardWrapperProps) => {
-  const {
-    document: {
-      rank,
-      nftId,
-      image,
-      collectionName,
-      rarityScore,
-      collectionSlug,
-    },
-  } = item;
-  // const img = image.replace(
-  //   "https://ipfs.io/ipfs/",
-  //   "https://cronoscorgiclub.mypinata.cloud/ipfs/"
-  // );
-
-  const img = image.includes("/ipfs/")
-    ? image.replace(
-        image.slice(0, image.indexOf("/ipfs/")),
-        " https://cronoscorgiclub.mypinata.cloud"
-      )
-    : image.replace(
-        "https://ipfs.io/ipfs/",
-        "https://cronoscorgiclub.mypinata.cloud/ipfs/"
-      );
-
-  const cardOffsetRef = useRef(cardOffset);
-  useEffect(() => {
-    if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
-      setIsImageLoaded(false);
-      setTimeout(() => {
-        setIsImageLoaded(true);
-      }, 1000);
-      cardOffsetRef.current = cardOffset;
-    }
-  }, [item, cardOffset]);
-
-  return (
-    <div className="card__wrapper">
-      <div className="card__link">
-        <div
-          className={classNames("card__image", {
-            isLoading: !isImageLoaded,
-          })}
-          style={{
-            width: cardOffset.w,
-            height: cardOffset.h - 150,
-          }}
-        >
-          <img
-            src={
-              img ||
-              `https://media.raritysniper.com/${collectionSlug}/${nftId}-600.png`
-            }
-            onLoad={() => {
-              setIsImageLoaded(true);
-            }}
-            onError={() => {
-              const imageEl: any = document.getElementById(
-                `${collectionName}-${nftId}`
-              )!;
-              imageEl.src = `https://media.raritysniper.com/${collectionSlug}/${nftId}-600.webp`;
-
-              setIsImageLoaded(false);
-            }}
-            id={`${collectionName}-${nftId}`}
-            style={{ opacity: isImageLoaded ? 1 : 0 }}
-            referrerPolicy="no-referrer"
-            loading="lazy"
-            alt="card"
-          />
-        </div>
-        <div className="card__info">
-          <div className="card__title">
-            <div className="card__titleTop">
-              <span className="card__collection">{collectionName}</span>
-              <div>
-                <Icon />
-              </div>
-            </div>
-            <span className="card__nft">
-              {collectionName.split(" ")} #{nftId}
-            </span>
-          </div>
-          <div className="card__prize">
-            <div className="flex-box">
-              <div>
-                <span>Rank</span>
-              </div>
-              <div>
-                <span>Score</span>
-              </div>
-            </div>
-            <div className="flex-box value">
-              <div>
-                <span>#{rank}</span>
-              </div>
-              <div>
-                <span>{rarityScore}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Icon = () => {
   return (

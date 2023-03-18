@@ -38,6 +38,7 @@ export default function Home() {
   const [isShowFilter, setIsShowFilter] = useState(true);
   const router = useRouter();
   const collectionQuery = router.query.collection;
+
   const [isShowProperties, setIsShowProperties] = useState(
     collectionQuery ? true : false
   );
@@ -48,7 +49,7 @@ export default function Home() {
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
     query,
-    router.query.collection
+    collectionQuery ? collectionQuery : ""
   );
 
   const toggleFilter = useCallback(() => {

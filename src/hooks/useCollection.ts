@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 import dataJSON from "../../collection.json";
@@ -7,6 +7,7 @@ export default function useCollection(collectionName: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [collection, setCollection] = useState<any>({});
+  const collectionNameRef = useRef<string>("");
 
   useEffect(() => {
     setLoading(true);
@@ -15,6 +16,15 @@ export default function useCollection(collectionName: string) {
     if (!collectionName) {
       setLoading(false);
       setCollection({});
+      collectionNameRef.current = collectionName;
+      return;
+    }
+
+    if (collectionName !== collectionNameRef.current) {
+      collectionNameRef.current = collectionName;
+    } else {
+      setLoading(false);
+      setError(false);
       return;
     }
 
@@ -27,12 +37,9 @@ export default function useCollection(collectionName: string) {
     axios({
       method: "GET",
       url: `https://api.raritysniper.com/public/collection/${collectionName}`,
-      withCredentials: false,
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then(({ data }) => {
-        setCollection(data);
-        setLoading(false);
         if (data) {
           axios({
             method: "POST",
@@ -40,6 +47,8 @@ export default function useCollection(collectionName: string) {
             data: data,
           });
         }
+        setCollection(data);
+        setLoading(false);
       })
       .catch((e) => {
         if (axios.isCancel(e)) return;
