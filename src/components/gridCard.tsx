@@ -30,37 +30,45 @@ export const GridCard = React.forwardRef(
         setCardOffset({ w: cardWidth, h: cardHeight });
         let rowIndex = 1;
         let left = 0;
-        const newArray = data.map((item: any, index: number) => {
-          if (Number.isInteger(index / column)) {
-            rowIndex++;
-            left = 0;
-          } else {
-            left = left + (cardWidth + rowGap);
-          }
-          if (index + 1 === data.length) {
-            return {
-              ...item,
-              row: rowIndex,
-              top: (rowIndex - 2) * (cardHeight + columnGap),
-              left: left,
-              nodeRef: ref,
-            };
-          } else {
-            return {
-              ...item,
-              row: rowIndex,
-              top: (rowIndex - 2) * (cardHeight + columnGap),
-              left: left,
-              nodeRef: createRef(),
-            };
-          }
-        });
+        const newArray =
+          data &&
+          data.length > 0 &&
+          data.map((item: any, index: number) => {
+            if (Number.isInteger(index / column)) {
+              rowIndex++;
+              left = 0;
+            } else {
+              left = left + (cardWidth + rowGap);
+            }
+            if (index + 1 === data.length) {
+              return {
+                ...item,
+                row: rowIndex,
+                top: (rowIndex - 2) * (cardHeight + columnGap),
+                left: left,
+                nodeRef: ref,
+              };
+            } else {
+              return {
+                ...item,
+                row: rowIndex,
+                top: (rowIndex - 2) * (cardHeight + columnGap),
+                left: left,
+                nodeRef: createRef(),
+              };
+            }
+          });
         setDataRender(newArray);
       }
     }, [column, data, rowGap, columnGap, width, isRefetch, ref]);
 
     function calculateHeightGrid() {
-      return Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap);
+      if (dataRender && dataRender.length > 0) {
+        return (
+          Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap)
+        );
+      }
+      return 0;
     }
 
     return (
@@ -74,31 +82,33 @@ export const GridCard = React.forwardRef(
         }}
       >
         <TransitionGroup className="todo-list">
-          {dataRender.map((item: any, index: number) => {
-            return (
-              <CSSTransition
-                key={`${item.document.nftId}-${index}-${item.document.image}`}
-                nodeRef={item.nodeRef}
-                timeout={500}
-                classNames="item"
-              >
-                <CardsRender
-                  ref={item.nodeRef}
-                  cardOffset={cardOffset}
+          {dataRender &&
+            dataRender.length > 0 &&
+            dataRender.map((item: any, index: number) => {
+              return (
+                <CSSTransition
                   key={`${item.document.nftId}-${index}-${item.document.image}`}
-                  item={item}
-                  index={index}
-                  style={{
-                    position: "absolute",
-                    top: item.top,
-                    left: item.left,
-                    width: cardOffset.w,
-                    height: cardOffset.h,
-                  }}
-                />
-              </CSSTransition>
-            );
-          })}
+                  nodeRef={item.nodeRef}
+                  timeout={500}
+                  classNames="item"
+                >
+                  <CardsRender
+                    ref={item.nodeRef}
+                    cardOffset={cardOffset}
+                    key={`${item.document.nftId}-${index}-${item.document.image}`}
+                    item={item}
+                    index={index}
+                    style={{
+                      position: "absolute",
+                      top: item.top,
+                      left: item.left,
+                      width: cardOffset.w,
+                      height: cardOffset.h,
+                    }}
+                  />
+                </CSSTransition>
+              );
+            })}
         </TransitionGroup>
       </div>
     );

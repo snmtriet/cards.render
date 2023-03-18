@@ -25,10 +25,7 @@ const HeaderMobile = ({
             </span>
           </div>
         </Link> */}
-        <FiltersSearch
-          placeholder="Search by collection"
-          setCollectionMain={undefined}
-        />
+        <FiltersSearch placeholder="Search by collection" />
 
         <div className="nav-mobile">
           <button

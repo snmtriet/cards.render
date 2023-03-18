@@ -69,9 +69,14 @@ export const FiltersRow = memo(
 
     const style: CSSProperties = isTraitsProperty
       ? {
-          height: !isShowTraits ? 45 : 270,
+          height: !isShowTraits
+            ? 45
+            : data && data.length > 6
+            ? 6 * 36 + 20
+            : data && data.length * 36 + 20,
           transition: "height ease-in-out .3s",
           overflow: "hidden",
+          maxHeight: 270,
         }
       : {
           height: !isShowProperties ? 45 : "100%",
@@ -116,11 +121,7 @@ export const FiltersRow = memo(
 
           {!isTraitsProperty && isShowProperties && (
             <>
-              <FiltersSearch
-                isAside
-                placeholder="Search by traits"
-                setCollectionMain={undefined}
-              />
+              <FiltersSearch isAside placeholder="Search by traits" />
               {traits &&
                 traits.length > 0 &&
                 traits.map((trait: traitData) => {
@@ -140,7 +141,7 @@ export const FiltersRow = memo(
             </>
           )}
 
-          {isTraitsProperty && isShowTraits && data && (
+          {isTraitsProperty && (
             <div className="filters__properties">
               <div className="filters__scroll">
                 <div className="filters__scroll-wrapper">

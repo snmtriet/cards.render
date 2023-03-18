@@ -27,7 +27,6 @@ type SiteChatProps = {
   setIsShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
   isOpenNavMobile: boolean;
   setOpenNavMobile: React.Dispatch<React.SetStateAction<boolean>>;
-  setCollectionMain: React.Dispatch<React.SetStateAction<any>>;
   handleChange: any;
   column: number;
   toggleProperties: () => void;
@@ -51,7 +50,6 @@ export default memo(function SiteChat({
   setOpenNavMobile,
   toggleProperties,
   isShowProperties,
-  setCollectionMain,
 }: SiteChatProps) {
   return (
     <>
@@ -120,10 +118,7 @@ export default memo(function SiteChat({
         <div className="nav-tab__container">
           <div className="feature-list">
             <div className="items-center" style={{ margin: 20 }}>
-              <FiltersSearch
-                placeholder="Search by collection"
-                setCollectionMain={setCollectionMain}
-              />
+              <FiltersSearch placeholder="Search by collection" />
             </div>
           </div>
         </div>

@@ -69,19 +69,23 @@ const CardWrapper = ({
       collectionSlug,
     },
   } = item;
-  const img = image.replace(
-    "https://ipfs.io/ipfs/",
-    "https://cronoscorgiclub.mypinata.cloud/ipfs/"
-  );
-  const uniqueRef = useRef(nftId);
-  const cardOffsetRef = useRef(cardOffset);
-  const unique = `${collectionSlug}#${nftId}#${index}#${img}`;
-  useEffect(() => {
-    // if (JSON.stringify(uniqueRef.current) !== JSON.stringify(unique)) {
-    //   setIsImageLoaded(false);
-    //   uniqueRef.current = unique;
-    // }
+  // const img = image.replace(
+  //   "https://ipfs.io/ipfs/",
+  //   "https://cronoscorgiclub.mypinata.cloud/ipfs/"
+  // );
 
+  const img = image.includes("/ipfs/")
+    ? image.replace(
+        image.slice(0, image.indexOf("/ipfs/")),
+        " https://cronoscorgiclub.mypinata.cloud"
+      )
+    : image.replace(
+        "https://ipfs.io/ipfs/",
+        "https://cronoscorgiclub.mypinata.cloud/ipfs/"
+      );
+
+  const cardOffsetRef = useRef(cardOffset);
+  useEffect(() => {
     if (JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)) {
       setIsImageLoaded(false);
       setTimeout(() => {
@@ -106,13 +110,17 @@ const CardWrapper = ({
           <img
             src={
               img ||
-              `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.png` ||
-              `https://media.raritysniper.com/mutant-ape-yacht-club/${nftId}-600.webp`
+              `https://media.raritysniper.com/${collectionSlug}/${nftId}-600.png`
             }
             onLoad={() => {
               setIsImageLoaded(true);
             }}
             onError={() => {
+              const imageEl: any = document.getElementById(
+                `${collectionName}-${nftId}`
+              )!;
+              imageEl.src = `https://media.raritysniper.com/${collectionSlug}/${nftId}-600.webp`;
+
               setIsImageLoaded(false);
             }}
             id={`${collectionName}-${nftId}`}
@@ -125,12 +133,14 @@ const CardWrapper = ({
         <div className="card__info">
           <div className="card__title">
             <div className="card__titleTop">
-              <span className="card__collection">Bored Ape Yacht Club</span>
+              <span className="card__collection">{collectionName}</span>
               <div>
                 <Icon />
               </div>
             </div>
-            <span className="card__nft">BoredApeYachtClub #{nftId}</span>
+            <span className="card__nft">
+              {collectionName.split(" ")} #{nftId}
+            </span>
           </div>
           <div className="card__prize">
             <div className="flex-box">

@@ -34,10 +34,7 @@ export const FiltersTop = memo(
               <span>Last update: 22 seconds ago</span>
             </div>
           </div>
-          <FiltersSearch
-            placeholder="Search by NFTs"
-            setCollectionMain={undefined}
-          />
+          <FiltersSearch placeholder="Search by collections" />
           <div className="filters__list">
             <div
               className="active"
