@@ -12,14 +12,9 @@ import { useRouter } from "next/router";
 type FiltersSearchProps = {
   isAside?: boolean;
   placeholder?: string;
-  setCollectionMain?: any;
 };
 
-export const FiltersSearch = ({
-  isAside,
-  placeholder,
-  setCollectionMain,
-}: FiltersSearchProps) => {
+export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
   const nodeRef = useRef(null);
 
   const [searchTermDebounce, searchTerm, setSearchTerm] = useDebounce("", 300);

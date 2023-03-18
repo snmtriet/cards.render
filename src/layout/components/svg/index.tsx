@@ -1920,8 +1920,8 @@ const IconLoading = ({ width, height, className, color, style }: svgProps) => {
     <svg
       viewBox="0 0 25 24"
       fill="none"
-      width="24"
-      height="24"
+      width={width ?? "24"}
+      height={height ?? "24"}
       style={{
         animation: "1s linear 0s infinite normal forwards running loadingIcon",
       }}

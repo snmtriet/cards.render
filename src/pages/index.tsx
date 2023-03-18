@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
@@ -9,11 +10,10 @@ import SiteChat from "@/layout/components/siteChat";
 import Header from "@/layout/components/Header/header";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { Notification } from "@/components/notification";
-import useDebounce from "@/hooks/useDebounce";
-import axios from "axios";
-import useSearchCollection from "@/hooks/useSearchCollection";
 import { useRouter } from "next/router";
-import useCollection from "@/hooks/useCollection";
+import { IconLoading } from "@/layout/components/svg";
+
+import collections from "../../collection.json";
 
 export default function Home() {
   const { width, height } = useWindowDimensions();
@@ -36,19 +36,21 @@ export default function Home() {
   const [isRefetch, setIsRefetch] = useState(false);
   const [column, setColumn] = useState(columnConfig);
   const [isShowFilter, setIsShowFilter] = useState(true);
-  const [isShowProperties, setIsShowProperties] = useState(true);
-  const [collectionMain, setCollectionMain] = useState<any>({});
-
   const router = useRouter();
-
-  const { collection, loading: loadingCollection } = useCollection(
-    router.query.collection as string
+  const collectionQuery = router.query.collection;
+  const [isShowProperties, setIsShowProperties] = useState(
+    collectionQuery ? true : false
   );
+
+  console.log("🍕 ~ collectionQuery:", collectionQuery);
+
+  const isFoundedCollection =
+    collections[collectionQuery as keyof typeof collections];
 
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
     query,
-    collection
+    router.query.collection
   );
 
   const toggleFilter = useCallback(() => {
@@ -57,7 +59,9 @@ export default function Home() {
   }, [loading]);
 
   const toggleProperties = useCallback(() => {
-    setIsShowProperties((prev) => !prev);
+    if (isFoundedCollection) {
+      setIsShowProperties((prev) => !prev);
+    }
   }, []);
 
   const toggleColumns = useCallback(
@@ -174,32 +178,65 @@ export default function Home() {
             <div className="page-layout-main">
               <div className="page-layout-inner">
                 <Notification />
-                <div className="total-found">
-                  <h3>
-                    Total:{" "}
-                    {new Intl.NumberFormat("en-IN", {
-                      maximumSignificantDigits: 10,
-                    }).format(found)}{" "}
-                    items
-                  </h3>
-                </div>
-                <div className="container">
-                  <div className="container__wrapper">
-                    <div className="list">
-                      <GridCard
-                        ref={lastNftElementRef}
-                        data={nfts}
-                        column={column <= 0 ? 1 : column}
-                        rowGap={rowGap}
-                        columnGap={columnGap}
-                        isRefetch={isRefetch}
-                      />
-                    </div>
+                {isFoundedCollection ? (
+                  <>
+                    {nfts && nfts.length > 0 ? (
+                      <>
+                        <div className="total-found">
+                          <h3>
+                            Total:{" "}
+                            {new Intl.NumberFormat("en-IN", {
+                              maximumSignificantDigits: 10,
+                            }).format(found)}{" "}
+                            items
+                          </h3>
+                        </div>
+                        <div className="container">
+                          <div className="container__wrapper">
+                            <div className="list">
+                              <GridCard
+                                ref={lastNftElementRef}
+                                data={nfts}
+                                column={column <= 0 ? 1 : column}
+                                rowGap={rowGap}
+                                columnGap={columnGap}
+                                isRefetch={isRefetch}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="loading-data">
+                        <IconLoading width={100} height={100} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="not-found">
+                    {!collectionQuery ? (
+                      <>
+                        <div className="contents">
+                          <h3 style={{ marginBottom: 0 }}>Search above</h3>
+                          <span>to see collection</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <img src="/image/404-2.png" alt="" />
+                        <div className="contents">
+                          <h3>Nothing found</h3>
+                          <span>
+                            We couldn&rsquo;t find anything with this criteria
+                          </span>
+                        </div>
+                      </>
+                    )}
                   </div>
-                </div>
+                )}
               </div>
               <div className="page-layout-footer">
-                {/* <Footer /> */}Loading...
+                {loading && <IconLoading width={100} height={100} />}
               </div>
             </div>
           </div>
@@ -218,7 +255,6 @@ export default function Home() {
         setOpenNavMobile={setOpenNavMobile}
         toggleProperties={toggleProperties}
         isShowProperties={isShowProperties}
-        setCollectionMain={setCollectionMain}
       />
     </div>
   );

@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-
+import useCollection from "./useCollection";
 type traitType = {
   count: number;
   highlighted: string;
@@ -26,7 +27,11 @@ const parseQuery = (query: {}): string => {
     .replace("]`", "]");
 };
 
-export default function useNft(pageNumber: number, query: {}, collection: any) {
+export default function useNft(
+  pageNumber: number,
+  query: {},
+  collectionSlug: any
+) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [nfts, setNfts] = useState<any>([]);
@@ -34,6 +39,10 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
   const [found, setFound] = useState(0);
   const [hasMore, setHasMore] = useState(false);
   const queryRef = useRef({} as any);
+  const collectionRef = useRef("");
+
+  let nftsClone: any[] = nfts;
+  let pageNumberClone: number = pageNumber;
 
   function filterTraits(
     traitName: string,
@@ -58,17 +67,29 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
     });
   }
 
+  const { collection, loading: loadingCollection } =
+    useCollection(collectionSlug);
+
   useEffect(() => {
+    if (!collectionSlug) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(false);
+    console.log({ query, collection, pageNumber });
     const isEqualQuery =
       JSON.stringify(queryRef.current) === JSON.stringify(query);
+
+    if (collection.collectionSlug !== collectionRef.current) {
+      nftsClone = [];
+      pageNumberClone = 1;
+    }
 
     let cancel: any;
 
     let searchQuery = {};
-    console.log({ collection });
-    if (!collection.traitsData) {
+    if (Object.keys(collection).length <= 0 && !collection.traitsData) {
       searchQuery = {
         query_by:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
@@ -80,13 +101,13 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
         facet_by:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name,trait_traits-count,forSale,rank,nftId,sortPrice",
         max_facet_values: 87,
-        page: pageNumber,
+        page: pageNumberClone,
         per_page: 24,
       };
     } else {
       const query_by = Object.keys(collection.traitsData).map((trait) => {
         if (trait.includes(" ")) {
-          return `trait_${trait.toLowerCase().replace(" ", "-")}`;
+          return `trait_${trait.toLowerCase().replaceAll(" ", "-")}`;
         } else {
           return `trait_${trait.toLowerCase()}`;
         }
@@ -99,10 +120,18 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
         q: "*",
         facet_by: `${query_by.join(",")},forSale,rank,nftId,sortPrice`,
         max_facet_values: 87,
-        page: pageNumber,
+        page: pageNumberClone,
         per_page: 24,
       };
     }
+
+    // axios({
+    //   method: "GET",
+    //   url: "http://localhost:3000/api/collections",
+    //   params: { name: collection.collectionSlug },
+    // }).then(({ data }) => {
+    //   // console.log(data);
+    // });
 
     axios({
       method: "POST",
@@ -119,16 +148,22 @@ export default function useNft(pageNumber: number, query: {}, collection: any) {
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then(({ data: { results } }) => {
-        console.log({ results });
-        //! FIRST TIME FETCH DATA
         if (
           Object.keys(query).length === 0 &&
           Object.keys(queryRef.current).length === 0
         ) {
+          //! FIRST TIME FETCH DATA
           setTraits(results[0].facet_counts);
           setNfts((prevNfts: any) => {
-            return [...prevNfts, ...results[0].hits];
+            if (collection.collectionSlug !== collectionRef.current) {
+              return results[0].hits;
+            } else {
+              return [...nftsClone, ...results[0].hits];
+            }
           });
+          if (collectionRef.current !== collection.collectionSlug) {
+            collectionRef.current = collection.collectionSlug;
+          }
           setFound(results[0].found);
         }
 

@@ -88,6 +88,53 @@ button {
   background: rgba(255, 255, 255, 0.2) !important;
 }
 
+.loading-data {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+
+  transform: translate(0%, -50%);
+}
+
+.not-found {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+
+  position: absolute;
+  top: 50%;
+
+  transform: translate(0%, -50%);
+
+  img {
+    width: 10%;
+    height: 10%;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-left: 50px;
+  }
+
+  .contents {
+    text-align: center;
+
+    h3 {
+      font-size: 1.6em;
+      margin-bottom: 0.48em;
+    }
+    span {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 1.1em;
+    }
+  }
+}
+
 .card__container {
   .card__wrapper {
     flex-direction: column;
