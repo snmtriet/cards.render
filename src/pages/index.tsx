@@ -235,7 +235,7 @@ export default function Home() {
                 )}
               </div>
               <div className="page-layout-footer">
-                {loading && <IconLoading width={100} height={100} />}
+                {/* {loading && <IconLoading width={100} height={100} />} */}
               </div>
             </div>
           </div>

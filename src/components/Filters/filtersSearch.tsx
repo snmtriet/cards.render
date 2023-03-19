@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useRef } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import classNames from "classnames";
 import { CSSTransition } from "react-transition-group";
 
@@ -8,6 +8,7 @@ import useSearchCollection from "@/hooks/useSearchCollection";
 import { IconLoading } from "@/layout/components/svg";
 import formatFirstStringToUpperCase from "@/utils/formatFirstString";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 type FiltersSearchProps = {
   isAside?: boolean;
@@ -20,8 +21,6 @@ export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
   const [searchTermDebounce, searchTerm, setSearchTerm] = useDebounce("", 300);
 
   const { collections, loading } = useSearchCollection(searchTermDebounce);
-
-  const router = useRouter();
 
   return (
     <div
@@ -61,41 +60,63 @@ export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
           {collections &&
             collections.length > 0 &&
             collections.map((item: any) => (
-              <div
-                className="collection"
+              <CollectionBox
                 key={item.document.collectionSlug}
-                onClick={() => {
-                  router.push(`/?collection=${item.document.collectionSlug}`);
-                  setSearchTerm("");
-                }}
-              >
-                <div
-                  className={classNames("collection__image", {
-                    isLoading: loading,
-                  })}
-                >
-                  <img
-                    src={item.document.image || item.document.openseaImage}
-                    alt={item.document.searchName}
-                    loading="lazy"
-                    style={{
-                      opacity: loading ? 0 : 1,
-                    }}
-                  />
-                </div>
-                <div className="collection__info">
-                  <div className="collection__text">
-                    <span>{item.document.searchName}</span>
-                    <span>
-                      Floor: {item.document.floorPrice} ETH -{" "}
-                      {formatFirstStringToUpperCase(item.document.blockchain)}
-                    </span>
-                  </div>
-                </div>
-              </div>
+                item={item}
+                loading={loading}
+                setSearchTerm={setSearchTerm}
+              />
             ))}
         </div>
       </CSSTransition>
     </div>
+  );
+};
+
+type CollectionBoxProps = {
+  setSearchTerm: Dispatch<SetStateAction<string>>;
+  loading: boolean;
+  item: any;
+};
+
+const CollectionBox = ({
+  setSearchTerm,
+  loading,
+  item,
+}: CollectionBoxProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState<boolean>();
+  return (
+    <Link
+      href={`/?collection=${item.document.collectionSlug}`}
+      className="collection"
+      onClick={() => {
+        setSearchTerm("");
+      }}
+    >
+      <div
+        className={classNames("collection__image", {
+          isLoading: !isImageLoaded,
+        })}
+      >
+        <img
+          src={item.document.image || item.document.openseaImage}
+          alt={item.document.searchName}
+          loading="lazy"
+          style={{
+            opacity: !isImageLoaded ? 0 : 1,
+          }}
+          onLoad={() => setIsImageLoaded(true)}
+        />
+      </div>
+      <div className="collection__info">
+        <div className="collection__text">
+          <span>{item.document.searchName}</span>
+          <span>
+            Floor: {item.document.floorPrice} ETH -{" "}
+            {formatFirstStringToUpperCase(item.document.blockchain)}
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 };

@@ -20,7 +20,6 @@ export const GridCard = memo(
     });
     const [dataRender, setDataRender] = useState([]);
     const { width } = useWindowDimensions();
-    const [count, setCount] = useState(0);
 
     useEffect(() => {
       const grid = document.getElementById("dynamic-grid");
