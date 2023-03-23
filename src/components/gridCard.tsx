@@ -3,13 +3,7 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import React, { createRef, forwardRef, memo, useEffect, useState } from "react";
 import { CardsRender } from "./cardsRender";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-type GridCardProps = {
-  data: any;
-  column: number;
-  rowGap: number;
-  columnGap: number;
-  isRefetch: boolean;
-};
+import { GridCardProps } from "@/model";
 
 const cardBottomHeight = 150;
 
@@ -121,7 +115,7 @@ export const GridCard = memo(
                 key={`${item.document.nftId}-${index}-${item.document.image}`}
                 nodeRef={item.nodeRef}
                 timeout={500}
-                classNames="item"
+                classNames="card__item"
               >
                 <CardsRender
                   ref={item.nodeRef}

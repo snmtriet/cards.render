@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { IconLoading } from "@/layout/components/svg";
 
 import collections from "../../collection.json";
+import { Sort } from "@/model";
 
 export default function Home() {
   const { width, height } = useWindowDimensions();
@@ -29,6 +30,7 @@ export default function Home() {
       ? 2
       : 1
     : 6;
+  const [sort, setSort] = useState(Sort["NFT-asc"]);
   const [query, setQuery] = useState({});
   const [rowGap, setRowGap] = useState(10);
   const [columnGap, setColumnGap] = useState(10);
@@ -49,7 +51,8 @@ export default function Home() {
   const { nfts, traits, hasMore, loading, filterTraits, found } = useNft(
     pageNumber,
     query,
-    collectionQuery ? collectionQuery : ""
+    collectionQuery ? collectionQuery : "",
+    sort
   );
 
   const toggleFilter = useCallback(() => {
@@ -147,10 +150,19 @@ export default function Home() {
     [loading, hasMore]
   );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>, type: string) => {
-    if (type === "column") setColumn(+e.target.value);
-    if (type === "rowGap") setRowGap(+e.target.value);
-    if (type === "columnGap") setColumnGap(+e.target.value);
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement> | string,
+    type: string
+  ) => {
+    if (type === "column")
+      setColumn(+(e as ChangeEvent<HTMLInputElement>).target.value);
+    if (type === "rowGap")
+      setRowGap(+(e as ChangeEvent<HTMLInputElement>).target.value);
+    if (type === "columnGap")
+      setColumnGap(+(e as ChangeEvent<HTMLInputElement>).target.value);
+    if (type === "sort") {
+      setSort(Sort[e as keyof typeof Sort]);
+    }
   };
 
   return (
@@ -242,6 +254,7 @@ export default function Home() {
         </div>
       </div>
       <SiteChat
+        sort={sort}
         rowGap={rowGap}
         column={column}
         traits={traits}

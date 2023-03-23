@@ -1,17 +1,5 @@
+import { FiltersOptionProps } from "@/model";
 import classNames from "classnames";
-
-type traitType = {
-  count: number;
-  highlighted: string;
-  value: string;
-  checked?: boolean;
-};
-
-type FiltersOptionProps = {
-  item: traitType;
-  pushQuery?: (property: string, value: string, type: "ADD" | "REMOVE") => void;
-  title: string;
-};
 
 export const FiltersOption = ({
   item,

@@ -7,20 +7,20 @@
   --max-width: 1100px;
 }
 
-.item-enter {
+.card__item-enter {
   opacity: 0;
   transform: translateY(500px);
 }
-.item-enter-active {
+.card__item-enter-active {
   opacity: 1;
   transform: translateY(0px);
   transition: all 0.4s;
 }
-.item-exit {
+.card__item-exit {
   opacity: 1;
   transform: translateY(0px);
 }
-.item-exit-active {
+.card__item-exit-active {
   opacity: 0;
   transform: translateY(500px);
   transition: all 0.4s;
@@ -80,6 +80,49 @@ button {
   cursor: pointer;
   outline: none;
   border: none;
+}
+
+.sort__result {
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  width: 100%;
+  background-color: rgb(36, 37, 47);
+  border-radius: 6px;
+  z-index: 999;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  filter: drop-shadow(0 0 0.2rem rgba(255, 255, 255, 0.2));
+
+  .sort__wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+
+    .items-center {
+      padding: 8px 10px;
+      position: relative;
+
+      &:hover {
+        cursor: pointer;
+        &::after {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      &::after {
+        content: "";
+        transition: all 0.15s ease-in-out 0s;
+        position: absolute;
+        inset: 0px;
+        opacity: 0;
+        transform: scale(0.9);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+        z-index: 2;
+      }
+    }
+  }
 }
 
 .isLoading {
@@ -404,13 +447,18 @@ button {
   align-items: flex-start;
   margin-bottom: 10px;
 
-  &:nth-child(4) {
+  &:nth-child(5) {
     margin-bottom: 30px;
   }
 
   .input__title {
     min-width: 120px;
     margin-bottom: 6px;
+  }
+
+  .input__wrapper {
+    width: 100%;
+    position: relative;
   }
 
   .input__input {
@@ -1013,10 +1061,12 @@ button {
     }
 
     .collection__image {
+      min-width: 50px;
+      min-height: 50px;
       max-width: 50px;
+      max-height: 50px;
       width: 50px;
       height: 50px;
-      max-height: 50px;
       margin-right: 20px;
       display: flex;
       align-items: center;
@@ -1033,12 +1083,16 @@ button {
 
     .collection__info {
       display: flex;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
 
       .collection__text {
         display: flex;
         flex-direction: column;
         gap: 10px;
         margin-right: 30px;
+        max-width: 100%;
 
         span {
           &:first-child {

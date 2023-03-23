@@ -4,10 +4,7 @@
 import React, { forwardRef, memo, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import IsImageOk from "@/utils/checkImage";
-
-type CardsRenderProps = {
-  item: any;
-};
+import { CardsRenderProps } from "@/model";
 
 export const CardsRender = memo(
   forwardRef((props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {

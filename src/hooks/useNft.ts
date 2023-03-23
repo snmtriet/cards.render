@@ -1,20 +1,9 @@
+import { formatFirstStringToLowerCase } from "@/utils/formatFirstString";
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useCollection from "./useCollection";
-type traitType = {
-  count: number;
-  highlighted: string;
-  value: string;
-};
-
-type traitData = {
-  counts: traitType[];
-  field_name: string;
-  stats: {
-    total_values: number;
-  };
-};
+import { Sort, traitData, traitType } from "@/model";
 
 const parseQuery = (query: {}): string => {
   return JSON.stringify(query)
@@ -30,7 +19,8 @@ const parseQuery = (query: {}): string => {
 export default function useNft(
   pageNumber: number,
   query: {},
-  collectionSlug: any
+  collectionSlug: any,
+  sort: Sort
 ) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -40,9 +30,7 @@ export default function useNft(
   const [hasMore, setHasMore] = useState(false);
   const queryRef = useRef({} as any);
   const collectionRef = useRef("");
-  const collectionSlugRef = useRef<string>("");
-
-  const queryStringRef = useRef<string>("");
+  const sortRef = useRef("");
 
   let nftsClone: any[] = nfts;
   let pageNumberClone: number = pageNumber;
@@ -91,7 +79,15 @@ export default function useNft(
       searchQuery = {
         query_by:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
-        sort_by: "rank:asc,nftId:asc",
+        sort_by: `${formatFirstStringToLowerCase(
+          sort.slice(0, sort.indexOf(":")).replace(" ", "")
+        )}:${
+          sort.includes("High to low")
+            ? "desc"
+            : sort.includes("Low to high")
+            ? "asc"
+            : ""
+        }`.replace("price", "sortPrice"),
         highlight_full_fields:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
         collection: "assets_mutant-ape-yacht-club",
@@ -112,7 +108,18 @@ export default function useNft(
       });
       searchQuery = {
         query_by: query_by.slice(0, query_by.length - 1).join(","),
-        sort_by: "rank:asc,nftId:asc",
+        sort_by: `${formatFirstStringToLowerCase(
+          sort
+            .slice(0, sort.indexOf(":"))
+            .replace(" ", "")
+            .replace("price", "sortPrice")
+        )}:${
+          sort.includes("High to low")
+            ? "desc"
+            : sort.includes("Low to high")
+            ? "asc"
+            : ""
+        }`.replace("price", "sortPrice"),
         highlight_full_fields: query_by.slice(0, query_by.length - 1).join(","),
         collection: `assets_${collection.collectionSlug}`,
         q: "*",
@@ -144,6 +151,7 @@ export default function useNft(
         ) {
           //! FIRST TIME FETCH DATA
           setTraits(results[0].facet_counts);
+
           setNfts((prevNfts: any) => {
             if (collection.collectionSlug !== collectionRef.current) {
               return results[0].hits;
@@ -154,6 +162,7 @@ export default function useNft(
           if (collectionRef.current !== collection.collectionSlug) {
             collectionRef.current = collection.collectionSlug;
           }
+
           setFound(results[0].found);
         }
 
@@ -182,6 +191,15 @@ export default function useNft(
           }
         }
 
+        if (sortRef.current !== sort) {
+          setNfts(results[0].hits);
+          setFound(results[0].found);
+        }
+
+        if (sortRef.current !== sort) {
+          sortRef.current = sort;
+        }
+
         setHasMore(results[0].hits.length > 0);
         setLoading(false);
       })
@@ -190,7 +208,7 @@ export default function useNft(
         setError(true);
       });
     return () => cancel();
-  }, [pageNumber, query, collection]);
+  }, [pageNumber, query, collection, sort]);
 
   return { loading, error, nfts, hasMore, traits, filterTraits, found };
 }

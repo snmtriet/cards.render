@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
-import formatFirstStringToUpperCase from "@/utils/formatFirstString";
+import { FilterRowProps, traitData, traitType } from "@/model";
+import { formatFirstStringToUpperCase } from "@/utils/formatFirstString";
 import classNames from "classnames";
 import {
   CSSProperties,
@@ -11,32 +12,6 @@ import {
 } from "react";
 import { FiltersOption } from "./filtersOption";
 import { FiltersSearch } from "./filtersSearch";
-
-type FilterRowProps = {
-  title: string;
-  isTraitsProperty?: boolean;
-  data?: traitType[];
-  count?: number;
-  pushQuery?: (property: string, value: string, type: "ADD" | "REMOVE") => void;
-  toggleProperties?: () => void;
-  isShowProperties?: boolean;
-  traits?: traitData[];
-};
-
-type traitType = {
-  count: number;
-  highlighted: string;
-  value: string;
-  checked?: boolean;
-};
-
-type traitData = {
-  counts: traitType[];
-  field_name: string;
-  stats: {
-    total_values: number;
-  };
-};
 
 export const FiltersRow = memo(
   ({
@@ -121,7 +96,6 @@ export const FiltersRow = memo(
 
           {!isTraitsProperty && isShowProperties && (
             <>
-              <FiltersSearch isAside placeholder="Search by traits" />
               {traits &&
                 traits.length > 0 &&
                 traits.map((trait: traitData) => {

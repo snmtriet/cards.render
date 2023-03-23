@@ -1,43 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import React, { memo } from "react";
+import React, { ChangeEvent, memo } from "react";
 import classNames from "classnames";
 
 import { IconChat, IconCloseCSGO } from "./svg";
 import Input from "@/components/input";
 import { FiltersRow, FiltersSearch } from "@/components/Filters";
-
-type traitData = {
-  counts: traitType[];
-  field_name: string;
-  stats: {
-    total_values: number;
-  };
-};
-
-type traitType = {
-  count: number;
-  highlighted: string;
-  value: string;
-};
-
-type SiteChatProps = {
-  isShowFilter: boolean;
-  setIsShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpenNavMobile: boolean;
-  setOpenNavMobile: React.Dispatch<React.SetStateAction<boolean>>;
-  handleChange: any;
-  column: number;
-  toggleProperties: () => void;
-  rowGap: number;
-  columnGap: number;
-  isShowProperties: boolean;
-  traits: traitData[];
-  pushQuery: (property: string, value: string, type: "ADD" | "REMOVE") => void;
-};
+import { SiteChatProps } from "@/model";
 
 export default memo(function SiteChat({
+  sort,
   column,
   rowGap,
   traits,
@@ -80,6 +53,15 @@ export default memo(function SiteChat({
               handleChange={handleChange}
               keyValue="columnGap"
               value={columnGap}
+            />
+            <Input
+              title="Sort"
+              handleChange={handleChange}
+              keyValue="sort"
+              value={sort}
+              type="text"
+              inputMode="text"
+              disabled
             />
             <FiltersRow
               title="Properties"

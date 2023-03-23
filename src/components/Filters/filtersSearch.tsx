@@ -6,18 +6,15 @@ import { CSSTransition } from "react-transition-group";
 import useDebounce from "@/hooks/useDebounce";
 import useSearchCollection from "@/hooks/useSearchCollection";
 import { IconLoading } from "@/layout/components/svg";
-import formatFirstStringToUpperCase from "@/utils/formatFirstString";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-type FiltersSearchProps = {
-  isAside?: boolean;
-  placeholder?: string;
-};
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { CollectionBoxProps, FiltersSearchProps } from "@/model";
+import { formatFirstStringToUpperCase } from "@/utils/formatFirstString";
 
 export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
   const nodeRef = useRef(null);
-
+  const { width } = useWindowDimensions();
   const [searchTermDebounce, searchTerm, setSearchTerm] = useDebounce("", 300);
 
   const { collections, loading } = useSearchCollection(searchTermDebounce);
@@ -56,7 +53,14 @@ export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
         classNames="result-collection"
         unmountOnExit
       >
-        <div className="collections-result" ref={nodeRef}>
+        <div
+          className="collections-result"
+          ref={nodeRef}
+          style={{
+            width: width && width < 468 ? width : "100%",
+            left: width && width < 468 ? "-1.25rem" : 0,
+          }}
+        >
           {collections &&
             collections.length > 0 &&
             collections.map((item: any) => (
@@ -71,12 +75,6 @@ export const FiltersSearch = ({ isAside, placeholder }: FiltersSearchProps) => {
       </CSSTransition>
     </div>
   );
-};
-
-type CollectionBoxProps = {
-  setSearchTerm: Dispatch<SetStateAction<string>>;
-  loading: boolean;
-  item: any;
 };
 
 const CollectionBox = ({
