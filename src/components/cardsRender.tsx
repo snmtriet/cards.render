@@ -1,31 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/display-name */
 /* eslint-disable @next/next/no-img-element */
-import React, {
-  CSSProperties,
-  forwardRef,
-  memo,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { forwardRef, memo, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import IsImageOk from "@/utils/checkImage";
 
 type CardsRenderProps = {
-  style?: CSSProperties;
   item: any;
-  cardOffset: {
-    w: number;
-    h: number;
-  };
-  index: number;
 };
 
 export const CardsRender = memo(
   forwardRef((props: CardsRenderProps, ref?: React.Ref<HTMLDivElement>) => {
-    const { style, item, cardOffset, index } = props;
-    const cardOffsetRef = useRef(cardOffset);
+    const { item } = props;
+    const cardOffsetRef = useRef(item.width);
 
     const {
       document: {
@@ -44,42 +31,31 @@ export const CardsRender = memo(
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-    const img = image.includes("/ipfs/")
-      ? image.replace(
-          image.slice(0, image.indexOf("/ipfs/")),
-          " https://cronoscorgiclub.mypinata.cloud"
-        )
-      : image.replace(
-          "https://ipfs.io/ipfs/",
-          "https://cronoscorgiclub.mypinata.cloud/ipfs/"
-        );
-
-    // const { nftOpensea } = useNftOpensea(collectionAddress, tokenId);
+    const img = image.replace(
+      image.slice(0, image.indexOf("/ipfs/") + "/ipfs/".length),
+      "https://coolio.myfilebase.com/ipfs/"
+    );
 
     useEffect(() => {
       if (
-        JSON.stringify(cardOffsetRef.current) !== JSON.stringify(cardOffset)
+        JSON.stringify(cardOffsetRef.current) !== JSON.stringify(item.width)
       ) {
         setIsImageLoaded(false);
         setTimeout(() => {
           setIsImageLoaded(true);
         }, 1000);
-        cardOffsetRef.current = cardOffset;
+        cardOffsetRef.current = item.width;
       }
-    }, [item, cardOffset]);
+    }, [item]);
 
     return (
-      <div className="card__container" style={style} ref={ref}>
+      <div className="card__container" ref={ref}>
         <div className="card__wrapper">
           <div className="card__link">
             <div
               className={classNames("card__image", {
                 isLoading: !isImageLoaded,
               })}
-              style={{
-                width: cardOffset.w,
-                height: cardOffset.h - 150,
-              }}
             >
               <img
                 src={

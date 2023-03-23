@@ -14,11 +14,7 @@ type GridCardProps = {
 export const GridCard = memo(
   forwardRef((props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
     const { data, column, rowGap, columnGap, isRefetch } = props;
-    const [cardOffset, setCardOffset] = useState({
-      w: 0,
-      h: 0,
-    });
-    const [dataRender, setDataRender] = useState([]);
+    const [dataRender, setDataRender] = useState<any[]>([]);
     const { width } = useWindowDimensions();
 
     useEffect(() => {
@@ -27,7 +23,6 @@ export const GridCard = memo(
         let { clientWidth } = grid;
         let cardWidth = (clientWidth - rowGap * (column - 1)) / column;
         const cardHeight = cardWidth + 150; // added height 150px
-        setCardOffset({ w: cardWidth, h: cardHeight });
         let rowIndex = 1;
         let left = 0;
         let count = 0;
@@ -52,6 +47,8 @@ export const GridCard = memo(
                 row: rowIndex,
                 top: (rowIndex - 2) * (cardHeight + columnGap),
                 left: left,
+                width: cardWidth,
+                height: cardHeight,
                 nodeRef: ref,
                 count,
               };
@@ -61,6 +58,8 @@ export const GridCard = memo(
                 row: rowIndex,
                 top: (rowIndex - 2) * (cardHeight + columnGap),
                 left: left,
+                width: cardWidth,
+                height: cardHeight,
                 nodeRef: createRef(),
                 count,
               };
@@ -71,55 +70,68 @@ export const GridCard = memo(
       }
     }, [column, data, rowGap, columnGap, width, isRefetch, ref]);
 
-    function calculateHeightGrid() {
-      if (dataRender && dataRender.length > 0) {
-        return (
-          Math.ceil(dataRender.length / column) * (cardOffset.h + columnGap)
-        );
+    useEffect(() => {
+      const grid = document.getElementById("dynamic-grid");
+      if (
+        dataRender &&
+        dataRender.length > 0 &&
+        grid &&
+        grid?.childNodes.length > 0
+      ) {
+        const { childNodes } = grid;
+
+        grid.style.cssText = `
+              position: relative;
+              height: ${
+                Math.ceil(dataRender.length / column) *
+                (dataRender[0].height + columnGap)
+              }px;
+              maxHeight: ${
+                Math.ceil(dataRender.length / column) *
+                (dataRender[0].height + columnGap)
+              }px;
+          `;
+
+        dataRender.map((item: any, index) => {
+          if (childNodes[index] as HTMLElement) {
+            const card__image = (childNodes[index] as HTMLElement).children[0]
+              .children[0].children[0] as HTMLElement;
+
+            (childNodes[index] as HTMLElement).style.cssText = `
+                      position: absolute;
+                      top: ${item.top}px;
+                      left: ${item.left}px;
+                      width: ${item.width}px;
+                      height: ${item.height}px;
+                  `;
+
+            card__image.style.height = `${item.height - 150}px`;
+          }
+        });
       }
-      return 0;
-    }
+    }, [dataRender, column, data, rowGap, columnGap, width, isRefetch, ref]);
 
     return (
-      <div
-        className="dynamic-grid"
-        id="dynamic-grid"
-        style={{
-          position: "relative",
-          height: calculateHeightGrid(),
-          maxHeight: calculateHeightGrid(),
-        }}
-      >
-        <TransitionGroup className="todo-list">
-          {dataRender &&
-            dataRender.length > 0 &&
-            dataRender.map((item: any, index: number) => {
-              return (
-                <CSSTransition
+      <TransitionGroup className="dynamic-grid" id="dynamic-grid">
+        {dataRender &&
+          dataRender.length > 0 &&
+          dataRender.map((item: any, index: number) => {
+            return (
+              <CSSTransition
+                key={`${item.document.nftId}-${index}-${item.document.image}`}
+                nodeRef={item.nodeRef}
+                timeout={500}
+                classNames="item"
+              >
+                <CardsRender
+                  ref={item.nodeRef}
                   key={`${item.document.nftId}-${index}-${item.document.image}`}
-                  nodeRef={item.nodeRef}
-                  timeout={500}
-                  classNames="item"
-                >
-                  <CardsRender
-                    ref={item.nodeRef}
-                    cardOffset={cardOffset}
-                    key={`${item.document.nftId}-${index}-${item.document.image}`}
-                    item={item}
-                    index={index}
-                    style={{
-                      position: "absolute",
-                      top: item.top,
-                      left: item.left,
-                      width: cardOffset.w,
-                      height: cardOffset.h,
-                    }}
-                  />
-                </CSSTransition>
-              );
-            })}
-        </TransitionGroup>
-      </div>
+                  item={item}
+                />
+              </CSSTransition>
+            );
+          })}
+      </TransitionGroup>
     );
   })
 );
