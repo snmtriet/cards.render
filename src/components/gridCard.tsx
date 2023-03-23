@@ -11,6 +11,8 @@ type GridCardProps = {
   isRefetch: boolean;
 };
 
+const cardBottomHeight = 150;
+
 export const GridCard = memo(
   forwardRef((props: GridCardProps, ref: React.Ref<HTMLDivElement>) => {
     const { data, column, rowGap, columnGap, isRefetch } = props;
@@ -22,7 +24,7 @@ export const GridCard = memo(
       if (grid) {
         let { clientWidth } = grid;
         let cardWidth = (clientWidth - rowGap * (column - 1)) / column;
-        const cardHeight = cardWidth + 150; // added height 150px
+        const cardHeight = cardWidth + cardBottomHeight; // added height 150px
         let rowIndex = 1;
         let left = 0;
         let count = 0;
@@ -65,7 +67,6 @@ export const GridCard = memo(
               };
             }
           });
-
         setDataRender(newArray);
       }
     }, [column, data, rowGap, columnGap, width, isRefetch, ref]);
@@ -79,7 +80,6 @@ export const GridCard = memo(
         grid?.childNodes.length > 0
       ) {
         const { childNodes } = grid;
-
         grid.style.cssText = `
               position: relative;
               height: ${
@@ -105,7 +105,7 @@ export const GridCard = memo(
                       height: ${item.height}px;
                   `;
 
-            card__image.style.height = `${item.height - 150}px`;
+            card__image.style.height = `${item.height - cardBottomHeight}px`;
           }
         });
       }
