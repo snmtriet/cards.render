@@ -30,10 +30,12 @@ export const CardsRender = memo(
 
     const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-    const img = image.replace(
-      image.slice(0, image.indexOf("/ipfs/") + "/ipfs/".length),
-      "https://coolio.myfilebase.com/ipfs/"
-    );
+    const img = image.includes("/ipfs/")
+      ? image.replace(
+          image.slice(0, image.indexOf("/ipfs/") + "/ipfs/".length),
+          "https://coolio.myfilebase.com/ipfs/"
+        )
+      : image;
 
     useEffect(() => {
       if (
@@ -74,6 +76,16 @@ export const CardsRender = memo(
                 loading="lazy"
                 alt="card"
               />
+              {salePrice && (
+                <div className="card__hidden">
+                  <div className="items-center">
+                    <span>Price: {salePrice}</span>
+                  </div>
+                  <div className="items-center token">
+                    <span>{saleToken}</span>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="card__info">
               <div className="card__title">
@@ -90,22 +102,20 @@ export const CardsRender = memo(
               <div className="card__prize">
                 <div className="flex-box">
                   <div>
-                    <span>Rank #{rank}</span>
+                    <span>Rank</span>
                   </div>
                   <div>
-                    <span>Score: {rarityScore}</span>
+                    <span>Score</span>
                   </div>
                 </div>
-                {salePrice ? (
-                  <div className="flex-box value">
-                    <div>
-                      <span>Price: {Math.round(salePrice)}</span>
-                    </div>
-                    <div>
-                      <span>{saleToken}</span>
-                    </div>
+                <div className="flex-box value">
+                  <div>
+                    <span>#{rank}</span>
                   </div>
-                ) : null}
+                  <div>
+                    <span>{rarityScore}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -230,6 +230,12 @@ button {
         border-color: transparent;
         box-shadow: rgba(255, 255, 255, 0.04) 0px 0px 0px 3px;
         cursor: pointer;
+
+        .card__image {
+          .card__hidden {
+            opacity: 1;
+          }
+        }
       }
 
       .card__image {
@@ -271,6 +277,34 @@ button {
           max-height: 100%;
           max-width: 100%;
           vertical-align: inherit;
+        }
+
+        .card__hidden {
+          opacity: 0;
+          position: absolute;
+          inset: 0px;
+          z-index: 1;
+          transition: all 0.08s ease-in-out 0s;
+          background: linear-gradient(
+            rgba(0, 0, 0, 0) 0%,
+            rgba(25, 28, 31, 0.3) 95%
+          );
+
+          .items-center {
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            border-radius: 8px;
+            padding: 4px 10px;
+            color: rgba(255, 255, 255, 0.85);
+            background: rgba(25, 28, 31, 0.4);
+
+            &.token {
+              right: 4px;
+              left: unset;
+              top: 4px;
+            }
+          }
         }
       }
 
