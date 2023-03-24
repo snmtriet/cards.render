@@ -76,7 +76,7 @@ export const CardsRender = memo(
                 loading="lazy"
                 alt="card"
               />
-              {salePrice && (
+              {salePrice && isImageLoaded && (
                 <div className="card__hidden">
                   <div className="items-center">
                     <span>Price: {salePrice}</span>
