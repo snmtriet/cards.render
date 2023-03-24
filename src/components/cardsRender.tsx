@@ -20,6 +20,8 @@ export const CardsRender = memo(
         rarityScore,
         collectionSlug,
         url,
+        salePrice,
+        saleToken,
       },
       count,
     } = item;
@@ -88,20 +90,22 @@ export const CardsRender = memo(
               <div className="card__prize">
                 <div className="flex-box">
                   <div>
-                    <span>Rank</span>
+                    <span>Rank #{rank}</span>
                   </div>
                   <div>
-                    <span>Score</span>
+                    <span>Score: {rarityScore}</span>
                   </div>
                 </div>
-                <div className="flex-box value">
-                  <div>
-                    <span>#{rank}</span>
+                {salePrice ? (
+                  <div className="flex-box value">
+                    <div>
+                      <span>Price: {Math.round(salePrice)}</span>
+                    </div>
+                    <div>
+                      <span>{saleToken}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span>{rarityScore}</span>
-                  </div>
-                </div>
+                ) : null}
               </div>
             </div>
           </div>

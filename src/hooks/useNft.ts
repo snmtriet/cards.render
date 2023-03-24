@@ -62,6 +62,19 @@ export default function useNft(
     useCollection(collectionSlug);
 
   useEffect(() => {
+    const sort_by = `${formatFirstStringToLowerCase(
+      sort
+        .slice(0, sort.indexOf(":"))
+        .replace(" ", "")
+        .replace("price", "sortPrice")
+    )}:${
+      sort.includes("High to low")
+        ? "desc"
+        : sort.includes("Low to high")
+        ? "asc"
+        : ""
+    }`.replace("price", "sortPrice");
+
     setLoading(true);
     setError(false);
     const isEqualQuery =
@@ -79,15 +92,7 @@ export default function useNft(
       searchQuery = {
         query_by:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
-        sort_by: `${formatFirstStringToLowerCase(
-          sort.slice(0, sort.indexOf(":")).replace(" ", "")
-        )}:${
-          sort.includes("High to low")
-            ? "desc"
-            : sort.includes("Low to high")
-            ? "asc"
-            : ""
-        }`.replace("price", "sortPrice"),
+        sort_by: sort_by,
         highlight_full_fields:
           "trait_background,trait_clothes,trait_earring,trait_eyes,trait_fur,trait_hat,trait_mouth,trait_name",
         collection: "assets_mutant-ape-yacht-club",
@@ -108,18 +113,7 @@ export default function useNft(
       });
       searchQuery = {
         query_by: query_by.slice(0, query_by.length - 1).join(","),
-        sort_by: `${formatFirstStringToLowerCase(
-          sort
-            .slice(0, sort.indexOf(":"))
-            .replace(" ", "")
-            .replace("price", "sortPrice")
-        )}:${
-          sort.includes("High to low")
-            ? "desc"
-            : sort.includes("Low to high")
-            ? "asc"
-            : ""
-        }`.replace("price", "sortPrice"),
+        sort_by: sort_by,
         highlight_full_fields: query_by.slice(0, query_by.length - 1).join(","),
         collection: `assets_${collection.collectionSlug}`,
         q: "*",
@@ -137,7 +131,9 @@ export default function useNft(
         searches: [
           Object.keys(query).length > 0
             ? Object.assign(searchQuery, {
-                filter_by: parseQuery(query),
+                filter_by: sort_by.includes("sortPrice:")
+                  ? `${parseQuery(query)} && forSale:=[true]`
+                  : parseQuery(query),
               })
             : searchQuery,
         ],

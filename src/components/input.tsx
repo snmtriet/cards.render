@@ -1,4 +1,5 @@
 import { InputProps, Sort } from "@/model";
+import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 
@@ -13,10 +14,19 @@ export default function Input({
 }: InputProps) {
   const nodeRef = useRef(null);
   const [sortOpen, setSortOpen] = useState(false);
+
+  const router = useRouter();
+  const collectionQuery = router.query.collection;
+
   return (
     <div className="input__container">
       <div className="input__title">{title}</div>
-      <div className="input__wrapper">
+      <div
+        className="input__wrapper"
+        onClick={() => {
+          disabled && collectionQuery && setSortOpen((prev) => !prev);
+        }}
+      >
         <input
           type={type}
           inputMode={inputMode}
@@ -25,13 +35,11 @@ export default function Input({
           onChange={(e) => {
             handleChange(e, keyValue);
           }}
-          onClick={() => {
-            disabled && setSortOpen((prev) => !prev);
-          }}
+          disabled={disabled}
+          className="input__input"
           onBlur={() => {
             disabled && setSortOpen(false);
           }}
-          className="input__input"
         />
         {title === "Sort" && (
           <CSSTransition

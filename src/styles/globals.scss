@@ -76,6 +76,10 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+input[type="text"]:disabled {
+  cursor: pointer;
+}
+
 button {
   cursor: pointer;
   outline: none;
