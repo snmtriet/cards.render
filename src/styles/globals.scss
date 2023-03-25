@@ -821,12 +821,21 @@ button {
       justify-content: space-between;
       padding: 10px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 100%;
+      overflow: hidden;
 
       &.active,
       &:hover {
         background: rgba(255, 255, 255, 0.04);
         border-radius: 6px;
         border-bottom: 1px solid transparent;
+      }
+
+      span {
+        user-select: none;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        max-width: 100%;
       }
 
       .value {
@@ -848,15 +857,6 @@ button {
         margin-bottom: 10px;
         padding-bottom: 10px;
       }
-    }
-
-    h3 {
-      font-family: inherit;
-      vertical-align: inherit;
-      font-size: 18px;
-      line-height: 24px;
-      font-weight: 600;
-      user-select: none;
     }
 
     .filters__properties {

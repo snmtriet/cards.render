@@ -45,7 +45,7 @@ export const FiltersRow = memo(
     const style: CSSProperties = isTraitsProperty
       ? {
           height: !isShowTraits
-            ? 45
+            ? 46
             : data && data.length > 6
             ? 6 * 36 + 20
             : data && data.length * 36 + 20,
@@ -54,7 +54,7 @@ export const FiltersRow = memo(
           maxHeight: 270,
         }
       : {
-          height: !isShowProperties ? 45 : "100%",
+          height: !isShowProperties ? 46 : "100%",
           transition: "height ease-in-out .3s",
         };
 
@@ -78,11 +78,11 @@ export const FiltersRow = memo(
               </div>
             ) : null}
 
-            <h3>
+            <span>
               {formatFirstStringToUpperCase(
                 title.replace("trait_", "")
               ).replace("-", " ")}
-            </h3>
+            </span>
             <div className="value">
               {isTraitsProperty && <span>{count}</span>}
               <IconArrow
