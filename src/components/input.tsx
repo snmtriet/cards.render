@@ -30,7 +30,7 @@ export default function Input({
         <input
           type={type}
           inputMode={inputMode}
-          value={value}
+          value={title === "Sort" ? (value ? value : "Sort value") : value}
           min={0}
           onChange={(e) => {
             handleChange(e, keyValue);
@@ -51,15 +51,19 @@ export default function Input({
           >
             <div className="sort__result" ref={nodeRef}>
               <div className="sort__wrapper">
-                {Object.keys(Sort).map((item) => (
-                  <div
-                    className="items-center"
-                    key={item}
-                    onClick={() => handleChange(item, keyValue)}
-                  >
-                    <span>{Sort[item as keyof typeof Sort]}</span>
-                  </div>
-                ))}
+                {Object.keys(Sort).map((item) => {
+                  if (Sort[item as keyof typeof Sort]) {
+                    return (
+                      <div
+                        className="items-center"
+                        key={item}
+                        onClick={() => handleChange(item, keyValue)}
+                      >
+                        <span>{Sort[item as keyof typeof Sort]}</span>
+                      </div>
+                    );
+                  }
+                })}
               </div>
             </div>
           </CSSTransition>

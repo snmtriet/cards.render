@@ -62,18 +62,20 @@ export default function useNft(
     useCollection(collectionSlug);
 
   useEffect(() => {
-    const sort_by = `${formatFirstStringToLowerCase(
-      sort
-        .slice(0, sort.indexOf(":"))
-        .replace(" ", "")
-        .replace("price", "sortPrice")
-    )}:${
-      sort.includes("High to low")
-        ? "desc"
-        : sort.includes("Low to high")
-        ? "asc"
-        : ""
-    }`.replace("price", "sortPrice");
+    const sort_by = sort
+      ? `${formatFirstStringToLowerCase(
+          sort
+            .slice(0, sort.indexOf(":"))
+            .replace(" ", "")
+            .replace("price", "sortPrice")
+        )}:${
+          sort.includes("High to low")
+            ? "desc"
+            : sort.includes("Low to high")
+            ? "asc"
+            : ""
+        }`.replace("price", "sortPrice")
+      : "rank:asc,nftId:asc";
 
     setLoading(true);
     setError(false);

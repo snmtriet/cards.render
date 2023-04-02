@@ -30,7 +30,7 @@ export default function Home() {
       ? 2
       : 1
     : 6;
-  const [sort, setSort] = useState(Sort["NFT-asc"]);
+  const [sort, setSort] = useState(Sort["Default"]);
   const [query, setQuery] = useState({});
   const [rowGap, setRowGap] = useState(10);
   const [columnGap, setColumnGap] = useState(10);

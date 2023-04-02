@@ -6,6 +6,7 @@ import React, {
 } from "react";
 
 export enum Sort {
+  "Default" = "",
   "R-desc" = "Rank: High to low",
   "R-asc" = "Rank: Low to high",
   "P-desc" = "Price: High to low",
