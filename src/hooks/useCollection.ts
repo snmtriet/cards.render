@@ -29,6 +29,7 @@ export default function useCollection(collectionName: string) {
     }
 
     if (dataJSON[collectionName as keyof typeof dataJSON]) {
+      console.log(dataJSON[collectionName as keyof typeof dataJSON]);
       setCollection(dataJSON[collectionName as keyof typeof dataJSON]);
     }
 

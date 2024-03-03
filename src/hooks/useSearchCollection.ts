@@ -20,10 +20,9 @@ export default function useSearchCollection(searchTermDebounce: string) {
 
     axios({
       method: "GET",
-      url: "https://search2.raritysniper.com/collections/collections/documents/search",
+      url: "https://search.raritysniper.com/collections/collections/documents/search",
       params: {
-        "x-typesense-api-key":
-          "L1NoMW9ITm1SYWNodFk4cWpmaHphQWZTS2tuaTVFWDNGdmxjT1llcEpLdz1uNWhMeyJmaWx0ZXJfYnkiOiJwdWJsaXNoZWQ6dHJ1ZSJ9",
+        "x-typesense-api-key": process.env.NEXT_PUBLIC_X_TYPESENSE_API_KEY,
         use_cache: true,
         q: searchTermDebounce,
         query_by: "searchName",

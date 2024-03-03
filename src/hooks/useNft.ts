@@ -128,7 +128,11 @@ export default function useNft(
 
     axios({
       method: "POST",
-      url: "https://search2.raritysniper.com/multi_search?use_cache=true&x-typesense-api-key=L1NoMW9ITm1SYWNodFk4cWpmaHphQWZTS2tuaTVFWDNGdmxjT1llcEpLdz1uNWhMeyJmaWx0ZXJfYnkiOiJwdWJsaXNoZWQ6dHJ1ZSJ9",
+      url: "https://search.raritysniper.com/multi_search",
+      params: {
+        use_cache: true,
+        "x-typesense-api-key": process.env.NEXT_PUBLIC_X_TYPESENSE_API_KEY,
+      },
       data: {
         searches: [
           Object.keys(query).length > 0
@@ -143,6 +147,7 @@ export default function useNft(
       cancelToken: new axios.CancelToken((c) => (cancel = c)),
     })
       .then(({ data: { results } }) => {
+        console.log("🍕 ~ results:", results);
         if (
           Object.keys(query).length === 0 &&
           Object.keys(queryRef.current).length === 0
@@ -154,7 +159,7 @@ export default function useNft(
             if (collection.collectionSlug !== collectionRef.current) {
               return results[0].hits;
             } else {
-              return [...nftsClone, ...results[0].hits];
+              return [...nftsClone, ...results[0]?.hits];
             }
           });
           if (collectionRef.current !== collection.collectionSlug) {
